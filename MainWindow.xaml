@@ -1,0 +1,75 @@
+﻿<Window x:Class="TTS_Chan.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TTS_Chan"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="MainWindow" Height="450" Width="800" Icon="/Resources/vrossaTTS.png">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70*"/>
+            <ColumnDefinition Width="30*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ScrollViewer x:Name="MessagesScrollView" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" Margin="10,10,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Bottom">
+            <StackPanel x:Name="MessagesStackPanel"/>
+        </ScrollViewer>
+        <ListBox x:Name="LogListBox" materialDesign:ListBoxItemAssist.ShowSelection="False" Grid.Row="0" Grid.Column="1"/>
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1">
+            <Button x:Name="ConnetionButton"
+                    Background="Green"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    materialDesign:ColorZoneAssist.Mode="Custom"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="False"
+                    Margin="40,20,40,20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center" Click="ConnetionButton_Click">
+                <TextBlock Text="Content"/>
+            </Button>
+            <TextBlock 
+                x:Name="StatusTextBlock"
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Top" Margin="20,0,20,0"
+                Text="Armed and ready" />
+        </StackPanel>
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,0,4,8">
+            <Button
+                x:Name="DatabaseButton"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="MaterialDesignFloatingActionMiniLightButton"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="4,0,4,0">
+                <materialDesign:PackIcon Kind="Database"/>
+            </Button>
+            <Button
+                x:Name="SettingsButton"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="MaterialDesignFloatingActionMiniLightButton"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="4,0,4,0" Click="SettingsButton_Click">
+                <materialDesign:PackIcon Kind="Cog"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

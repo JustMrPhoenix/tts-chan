@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TTS_Chan.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ChannelName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pex_is_cute</Value>
+    </Setting>
+    <Setting Name="AutoJoin" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AutoConnect" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HasAuth" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GlobalVolume" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">85</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

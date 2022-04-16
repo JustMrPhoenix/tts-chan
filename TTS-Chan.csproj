@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>TTS_Chan</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <Description>Poggers and cool</Description>
+    <Authors>Penix made this</Authors>
+    <Company>The Munchers</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="vrossaTTS.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="4.4.0" />
+    <PackageReference Include="ShowMeTheXAML.MSBuild" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\vrossaTTS.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
