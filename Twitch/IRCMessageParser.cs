@@ -1,43 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TTS_Chan.Twitch
 {
-    public class IRCMessageParser
+    public class IrcMessageParser
     {
-        public Dictionary<string, string> Tags = new Dictionary<string, string>();
-        public IRCMessageSource Source { get; private set; } = new IRCMessageSource();
+        public readonly Dictionary<string, string> Tags = new();
+        public IrcMessageSource Source { get; } = new();
         public string Command { get; private set; }
         public string[] Parameters { get; private set; }
 
-        private string ircLine;
-        public IRCMessageParser(string ircLine)
+        private readonly string _ircLine;
+        public IrcMessageParser(string ircLine)
         {
-            this.ircLine = ircLine;
+            _ircLine = ircLine;
             Parse();
         }
 
         private void Parse()
         {
-            string messageBuffer = ircLine;
+            var messageBuffer = _ircLine;
             if (messageBuffer.StartsWith("@"))
             {
-                string tags = ReadUntil(ref messageBuffer, " ");
-                tags = tags.Substring(1);
-                string[] tagSplit = tags.Split(';');
-                foreach (string tag in tagSplit)
+                var tags = ReadUntil(ref messageBuffer, " ");
+                tags = tags[1..];
+                var tagSplit = tags.Split(';');
+                foreach (var tag in tagSplit)
                 {
-                    string[] tagKeyVal = tag.Split('=');
+                    var tagKeyVal = tag.Split('=');
                     Tags.Add(tagKeyVal[0], tagKeyVal[1]);
                 }
             }
             if (messageBuffer.StartsWith(":"))
             {
-                string sourceStr = ReadUntil(ref messageBuffer, " ");
-                sourceStr.Substring(1);
+                var sourceStr = ReadUntil(ref messageBuffer, " ");
+                sourceStr = sourceStr[1..];
                 if (sourceStr.Contains("!"))
                 {
                     Source.Nick = ReadUntil(ref sourceStr, "!");
@@ -50,11 +49,11 @@ namespace TTS_Chan.Twitch
 
             }
             Command = ReadUntil(ref messageBuffer, " ");
-            string paramsStr = ReadUntil(ref messageBuffer, ":").Trim();
+            var paramsStr = ReadUntil(ref messageBuffer, ":").Trim();
             if (paramsStr.Contains(' '))
             {
-                string[] parameters = paramsStr.Split(' ');
-                parameters = parameters.Concat(new string[] { messageBuffer }).ToArray();
+                var parameters = paramsStr.Split(' ');
+                parameters = parameters.Concat(new[] { messageBuffer }).ToArray();
                 Parameters = parameters;
             }
             else if (paramsStr == "")
@@ -74,16 +73,16 @@ namespace TTS_Chan.Twitch
             }
         }
 
-        private string ReadUntil(ref string input, string util)
+        private static string ReadUntil(ref string input, string util)
         {
-            int charLocation = input.IndexOf(util);
+            var charLocation = input.IndexOf(util, StringComparison.Ordinal);
 
-            string result = input;
+            var result = input;
 
             if (charLocation > 0)
             {
-                result = input.Substring(0, charLocation);
-                input = input.Substring(charLocation + 1);
+                result = input[..charLocation];
+                input = input[(charLocation + 1)..];
                 return result;
             }
 
@@ -92,14 +91,17 @@ namespace TTS_Chan.Twitch
         }
     }
 
-    public class IRCMessageSource
+    public class IrcMessageSource
     {
         public string Nick;
         public string Username;
         public string Host;
     }
 
-    public static class IRCCommands
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
+    public static class IrcCommands
     {
         public const string PRIVSMG = "PRIVMSG";
         public const string PING = "PING";

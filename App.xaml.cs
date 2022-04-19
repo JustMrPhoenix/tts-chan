@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using TTS_Chan.TTS;
+using TTS_Chan.TTS.TTS_Providers;
 
 namespace TTS_Chan
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
+        public App()
+        {
+            TtsManager.Init();
+            TtsManager.AddProvider(new WindowsTtsProvider());
+        }
     }
 }

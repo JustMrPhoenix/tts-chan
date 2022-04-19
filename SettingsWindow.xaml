@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:properties="clr-namespace:TTS_Chan.Properties"
-        xmlns:local="clr-namespace:TTS_Chan"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -15,43 +14,61 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="Settings" Height="450" Width="319" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
-    <StackPanel HorizontalAlignment="Stretch" Margin="40,30,40,30">
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-            <ToggleButton x:Name="AutoConnectToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AutoConnect}"/>
-            <TextBlock Text="Auto connect"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="0,3,0,2">
-            <ToggleButton x:Name="AutoJoinToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AutoJoin}"/>
-            <TextBlock Text="Auto join"/>
-        </StackPanel>
-        <TextBox x:Name="ChannelNameInput"  materialDesign:HintAssist.Hint="Channel name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="0,2,0,2" Text="{Binding Source={x:Static properties:Settings.Default}, Path=ChannelName}"/>
-        <Separator Margin="3,10,3,10"/>
-        <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0:#}}"/>
-        <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="{Binding Source={x:Static properties:Settings.Default}, Path=GlobalVolume}"/>
-        <Separator Margin="3,10,3,10"/>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Google credentials:"/>
-            <TextBlock x:Name="GoogleAccountStatusBlock" Text="Invalid" Foreground="IndianRed" Margin="4,0,0,0"/>
-        </StackPanel>
-        <Button x:Name="OpenGAuthFile" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Load google credentials from file" IsEnabled="True" >
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Open file"/>
-                <materialDesign:PackIcon Kind="FileDownload" Margin="4,0,0,0" />
+    <Grid>
+        <materialDesign:DialogHost x:Name="DialogHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsOpen="False">
+            <materialDesign:DialogHost.DialogContent>
+                <StackPanel Margin="16">
+                    <TextBlock x:Name="DialogueTextBox" Text="There should be some text here!"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True"
+                        Margin="0 8 8 0" Command="materialDesign:DialogHost.CloseDialogCommand">
+                            <TextBlock x:Name="DialogueButtonText" Text="Pog"/>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+        <StackPanel HorizontalAlignment="Stretch" Margin="40,30,40,30">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                <ToggleButton x:Name="AutoConnectToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AutoConnect}"/>
+                <TextBlock Text="Auto connect"/>
             </StackPanel>
-        </Button>
-        <Separator Margin="3,10,3,10"/>
-        <StackPanel Orientation="Horizontal">
-            <ToggleButton x:Name="AuthToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HasAuth}"/>
-            <TextBlock Text="Authorize as channel"/>
-        </StackPanel>
-        <PasswordBox x:Name="TwitchAuthInputBox" materialDesign:HintAssist.Hint="Twitch OAuth Token"
-                     materialDesign:HintAssist.Foreground="IndianRed" materialDesign:TextFieldAssist.UnderlineBrush="IndianRed"
-                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,4,0,4" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}"/>
-        <Button x:Name="GenerateToken" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Load google credentials from file" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" >
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Generate token"/>
-                <materialDesign:PackIcon Kind="Account" Margin="4,0,0,0" />
+            <StackPanel Orientation="Horizontal" Margin="0,3,0,2">
+                <ToggleButton x:Name="AutoJoinToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AutoJoin}"/>
+                <TextBlock Text="Auto join"/>
             </StackPanel>
-        </Button>
-    </StackPanel>
+            <TextBox x:Name="ChannelNameInput"  materialDesign:HintAssist.Hint="Channel name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="0,2,0,2" Text="{Binding Source={x:Static properties:Settings.Default}, Path=ChannelName}"/>
+            <Separator Margin="3,10,3,10"/>
+            <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0:#}}"/>
+            <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="{Binding Source={x:Static properties:Settings.Default}, Path=GlobalVolume}"/>
+            <Separator Margin="3,10,3,10"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Google credentials:"/>
+                <TextBlock x:Name="GoogleAccountStatusBlock" Text="Invalid" Foreground="IndianRed" Margin="4,0,0,0"/>
+            </StackPanel>
+            <Button x:Name="OpenGAuthFile" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Load google credentials from file" IsEnabled="True" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Open file"/>
+                    <materialDesign:PackIcon Kind="FileDownload" Margin="4,0,0,0" />
+                </StackPanel>
+            </Button>
+            <Separator Margin="3,10,3,10"/>
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton x:Name="AuthToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HasAuth}"/>
+                <TextBlock Text="Authorize as channel"/>
+            </StackPanel>
+            <PasswordBox x:Name="TwitchAuthInputBox"
+                     materialDesign:HintAssist.Hint="Twitch OAuth Token"
+                     materialDesign:HintAssist.Foreground="IndianRed"
+                     materialDesign:TextFieldAssist.UnderlineBrush="IndianRed"
+                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,4,0,4" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" LostFocus="TwitchAuthInputBox_LostFocus" KeyDown="TwitchAuthInputBox_KeyDown"/>
+            <Button x:Name="GenerateToken" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Generate twitch token by opening browser" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Generate token"/>
+                    <materialDesign:PackIcon Kind="Account" Margin="4,0,0,0" />
+                </StackPanel>
+            </Button>
+            <materialDesign:DialogHost DialogTheme="Inherit"/>
+        </StackPanel>
+    </Grid>
 </Window>
