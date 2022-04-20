@@ -6,6 +6,7 @@
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             mc:Ignorable="d" 
             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+            xmlns:components="clr-namespace:TTS_Chan.Components"
             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
             TextElement.FontWeight="Regular"
             TextElement.FontSize="13"
@@ -24,17 +25,21 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Foreground="{Binding UserColor, ElementName=UserControl}" Grid.Row="0" Margin="16,8,16,8" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignBody2TextBlock}" Text="{Binding UserDisplayName, ElementName=UserControl}"/>
-        <Button Grid.Row="2" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignToolForegroundButton}" Padding="0 0 0 0" materialDesign:RippleAssist.IsCentered="True" Margin="8,0,8,0">
-            <materialDesign:PackIcon Kind="VolumeHigh" />
-        </Button>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="16,8,16,8">
+            <TextBlock Foreground="{Binding UserColor}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignBody2TextBlock}" Text="{Binding UserDisplayName}"/>
+            <TextBlock x:Name="UsernameTextBlock" Foreground="{Binding UserColor}"  Margin="10,0,0,0" VerticalAlignment="Center" Style="{StaticResource MaterialDesignBody2TextBlock}" Text="{Binding Username, StringFormat='({0})'}"/>
+        </StackPanel>
+        
         <materialDesign:PopupBox Grid.Row="0" HorizontalAlignment="Right">
             <StackPanel>
-                <Button Content="More" />
-                <Button Content="Options" />
+                <Button Content="Mute"/>
+                <Button Content="Edit voice" Click="Button_Click" />
             </StackPanel>
         </materialDesign:PopupBox>
         <Separator Grid.Row="1" Style="{StaticResource MaterialDesignLightSeparator}" Margin="0,-9,0,0" RenderTransformOrigin="0.496,1.958" />
-        <TextBlock Grid.Row="2" Width="auto" Margin="16,0,16,0" Style="{StaticResource MaterialDesignTextBlock}" TextWrapping="WrapWithOverflow" Text="{Binding MessageText, ElementName=UserControl}"/>
+        <TextBlock Grid.Row="2" Width="auto" Margin="16,0,16,0" Style="{StaticResource MaterialDesignTextBlock}" TextWrapping="WrapWithOverflow" Text="{Binding MessageText}"/>
+        <Button Grid.Row="2" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignToolForegroundButton}" Padding="0 0 0 0" materialDesign:RippleAssist.IsCentered="True" Margin="8,0,8,0">
+            <materialDesign:PackIcon Kind="VolumeHigh" />
+        </Button>
     </Grid>
 </UserControl>

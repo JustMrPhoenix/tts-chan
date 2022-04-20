@@ -1,0 +1,83 @@
+﻿<Window x:Class="TTS_Chan.DatabaseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Database management" Height="450" Width="800">
+    <Grid>
+        <materialDesign:Card>
+            <TabControl
+                materialDesign:ColorZoneAssist.Mode="PrimaryLight">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Users"/>
+                            <materialDesign:PackIcon Kind="AccountSearch" Margin="4,0,4,0" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Grid>
+                        <materialDesign:DialogHost x:Name="AddUserDialog" DialogTheme="Inherit">
+                            <materialDesign:DialogHost.DialogContent>
+                                <StackPanel Margin="16">
+                                    <TextBlock Text="Add a new fruit." />
+                                    <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="FruitTextBox" />
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Content="ACCEPT" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    True
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="CANCEL" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    False
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                            <Border BorderThickness="1" BorderBrush="{DynamicResource PrimaryHueMidBrush}" MinHeight="256" ClipToBounds="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
+                                        <Button
+                                            Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Right"
+                                            Margin="4 4 4 4"
+                                            Content="{materialDesign:PackIcon Kind=Plus, Size=22}" />
+                                    </StackPanel>
+                                    <ListBox x:Name="FruitListBox" Grid.Row="0">
+                                        <ListBoxItem Content="Apple" />
+                                        <ListBoxItem Content="Banana" />
+                                        <ListBoxItem Content="Pear" />
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+                        </materialDesign:DialogHost>
+                    </Grid>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Substitutions"/>
+                            <materialDesign:PackIcon Kind="MessageReplyText" Margin="4,0,4,0" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Grid>
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
+    </Grid>
+</Window>

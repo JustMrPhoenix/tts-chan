@@ -1,0 +1,42 @@
+﻿<Window x:Class="TTS_Chan.UserVoiceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:TTS_Chan"
+        xmlns:db="clr-namespace:TTS_Chan.Database"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        ResizeMode="NoResize"
+        Title="User voice properties" Height="420" Width="300" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Margin="16,16,16,16" Grid.Row="0">
+            <TextBox materialDesign:HintAssist.Hint="Username" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Text="{Binding Username, Mode=TwoWay}"  Margin="0,4,0,4"/>
+            <CheckBox IsChecked="{Binding IsMuted}" Content="Is muted" Margin="0,4,0,4"/>
+            <Label Content="Voice provider:" Margin="0,4,0,0"/>
+            <ComboBox x:Name="ProviderComboBox" materialDesign:HintAssist.Hint="Voice provider" SelectionChanged="ProviderComboBox_SelectionChanged" Margin="0,0,0,4" SelectedItem="{Binding VoiceProvider, Mode=TwoWay}"/>
+            <Label Content="Voice:" Margin="0,4,0,0"/>
+            <ComboBox x:Name="VoiceNameComboBox" materialDesign:HintAssist.Hint="Voice name" Margin="0,0,0,4" SelectedItem="{Binding VoiceName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding Rate, StringFormat=Rate: {0}}"/>
+            <Slider Minimum="-100" Maximum="100" Value="{Binding Rate, Mode=TwoWay}" />
+            <TextBlock Text="{Binding Pitch, StringFormat=Pitch: {0}}"/>
+            <Slider Minimum="-100" Maximum="100" Value="{Binding Pitch, Mode=TwoWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="16,16,10,16" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button x:Name="PreviewButton" Content="Preview" Margin="0,0,4,0" Click="PreviewButton_Click"/>
+            <Button x:Name="PreviewPromptButton" Content="Set prompt" Margin="0,0,4,0" Click="PreviewPromptButton_Click"/>
+            <Button Content="Save" IsCancel="True" Margin="4,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TTS_Chan.Components;
+using TTS_Chan.Database;
 using TTS_Chan.TTS;
 
 namespace TTS_Chan
@@ -15,6 +16,7 @@ namespace TTS_Chan
     /// </summary>
     public partial class MainWindow
     {
+        public static MainWindow Instance;
         private static readonly int MaxMessages = 50;
         private static readonly SolidColorBrush[] MessageBgColors = {
             (SolidColorBrush)new BrushConverter().ConvertFrom("#242427"),
@@ -26,8 +28,9 @@ namespace TTS_Chan
 
         public MainWindow()
         {
-            InitializeComponent();
             DataContext = this;
+            InitializeComponent();
+            Instance = this;
             _twitchConnector = new Twitch.TwitchConnector(this);
             _twitchConnector.IrcStatusChanged += delegate (Twitch.TwitchConnectionStatus status, string message)
             {
@@ -78,61 +81,74 @@ namespace TTS_Chan
             {
                 case Twitch.TwitchConnectionStatus.NotConnected:
                 case Twitch.TwitchConnectionStatus.Disconnected:
-                    ConnetionButtonContent.Text = "Connect";
-                    ConnetionButton.Background = Brushes.Green;
+                    ConnectionButtonContent.Text = "Connect";
+                    ConnectionButton.Background = Brushes.Green;
                     StatusTextBlock.Text = "Not connected";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
-                    ConnetionButton.IsEnabled = true;
+                    ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
+                    ConnectionButton.IsEnabled = true;
                     break;
                 case Twitch.TwitchConnectionStatus.Connecting:
-                    ConnetionButtonContent.Text = "Connecting...";
-                    ConnetionButton.Background = Brushes.Gray;
+                    ConnectionButtonContent.Text = "Connecting...";
+                    ConnectionButton.Background = Brushes.Gray;
                     StatusTextBlock.Text = "Connecting...";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
-                    ConnetionButton.IsEnabled = false;
+                    ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
+                    ConnectionButton.IsEnabled = false;
                     break;
                 case Twitch.TwitchConnectionStatus.Connected:
-                    ConnetionButtonContent.Text = "Join " + Properties.Settings.Default.ChannelName;
-                    ConnetionButton.Background = Brushes.DarkGreen;
+                    ConnectionButtonContent.Text = "Join " + Properties.Settings.Default.ChannelName;
+                    ConnectionButton.Background = Brushes.DarkGreen;
                     StatusTextBlock.Text = "Connected";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
-                    ConnetionButton.IsEnabled = true;
+                    if (!Properties.Settings.Default.AutoJoin)
+                    {
+                        ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
+                        ConnectionButton.IsEnabled = true;
+                    }
+                    else
+                    {
+                        ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
+                        ConnectionButton.IsEnabled = false;
+                    }
                     break;
 
                 case Twitch.TwitchConnectionStatus.Joined:
-                    ConnetionButtonContent.Text = "Disconnect";
-                    ConnetionButton.Background = Brushes.Red;
+                    ConnectionButtonContent.Text = "Disconnect";
+                    ConnectionButton.Background = Brushes.Red;
                     StatusTextBlock.Text = "Connected";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
-                    ConnetionButton.IsEnabled = true;
+                    ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, false);
+                    ConnectionButton.IsEnabled = true;
                     break;
                 case Twitch.TwitchConnectionStatus.Reconnecting:
-                    ConnetionButtonContent.Text = "Reconnecting...";
-                    ConnetionButton.Background = Brushes.DarkOrange;
+                    ConnectionButtonContent.Text = "Reconnecting...";
+                    ConnectionButton.Background = Brushes.DarkOrange;
                     StatusTextBlock.Text = "Reconnecting...";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
-                    ConnetionButton.IsEnabled = false;
+                    ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
+                    ConnectionButton.IsEnabled = false;
                     break;
                 case Twitch.TwitchConnectionStatus.Error:
-                    ConnetionButtonContent.Text = "Reconnecting...";
-                    ConnetionButton.Background = Brushes.DarkOrange;
+                    ConnectionButtonContent.Text = "Reconnecting...";
+                    ConnectionButton.Background = Brushes.DarkOrange;
                     StatusTextBlock.Text = "Reconnecting...";
-                    ConnetionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
-                    ConnetionButton.IsEnabled = false;
+                    ConnectionButton.SetValue(ButtonProgressAssist.IsIndeterminateProperty, true);
+                    ConnectionButton.IsEnabled = false;
                     break;
             }
             if(message != null)
             {
                 StatusTextBlock.Text += "\n" + message;
-                AddLog(message);
+                AddLog(message, false);
             } else
             {
-                AddLog(Enum.GetName(typeof(Twitch.TwitchConnectionStatus), status));
+                AddLog(Enum.GetName(typeof(Twitch.TwitchConnectionStatus), status), false);
             }
         }
 
-        private void AddLog(string message)
+        public void AddLog(string message, bool shouldInvoke = true)
         {
+            if (shouldInvoke)
+            {
+                Dispatcher.Invoke(() => { AddLog(message, false); });
+                return;
+            }
             _eventLog.Add(message);
             LogListBox.ItemsSource = _eventLog;
             if (VisualTreeHelper.GetChildrenCount(LogListBox) <= 0) return;
@@ -165,21 +181,27 @@ namespace TTS_Chan
             settingsWindow.ShowDialog();
         }
 
-        private void ConnetionButton_Click(object sender, RoutedEventArgs e)
+        private void ConnectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if(_twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.NotConnected || _twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.Disconnected)
+            switch (_twitchConnector.IrcStatus)
             {
-                _ = ConnectTwitch(_twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.Disconnected);
+                case Twitch.TwitchConnectionStatus.NotConnected:
+                case Twitch.TwitchConnectionStatus.Disconnected:
+                    _ = ConnectTwitch(_twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.Disconnected);
+                    break;
+                case Twitch.TwitchConnectionStatus.Connected when !Properties.Settings.Default.AutoJoin:
+                    _ = _twitchConnector.JoinChannel(Properties.Settings.Default.ChannelName);
+                    break;
+                default:
+                    _ = _twitchConnector.Disconnect();
+                    break;
             }
-            else if(_twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.Connected && !Properties.Settings.Default.AutoJoin)
-            {
-                _ = _twitchConnector.JoinChannel(Properties.Settings.Default.ChannelName);
-            }
-            else
-            {
-                _ = _twitchConnector.Disconnect();
-            }
-            
+        }
+
+        private void DatabaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            DatabaseWindow dbWindow = new();
+            dbWindow.ShowDialog();
         }
     }
 }

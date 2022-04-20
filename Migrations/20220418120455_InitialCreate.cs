@@ -10,7 +10,7 @@ namespace TTS_Chan.Migrations
             CREATE TABLE UserVoices (
                 UserVoiceId INTEGER PRIMARY KEY AUTOINCREMENT, 
 	            UserId TEXT,
-   	            UserDisplayName TEXT,
+   	            Username TEXT,
                 IsMuted BOOLEAN DEFAULT FALSE,
 	            VoiceProvider TEXT NOT NULL,
 	            VoiceName TEXT NOT NULL,

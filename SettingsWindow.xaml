@@ -13,7 +13,8 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Settings" Height="450" Width="319" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
+        ResizeMode="NoResize"
+        Title="Settings" Height="450" Width="320" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
     <Grid>
         <materialDesign:DialogHost x:Name="DialogHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsOpen="False">
             <materialDesign:DialogHost.DialogContent>
@@ -39,7 +40,7 @@
             </StackPanel>
             <TextBox x:Name="ChannelNameInput"  materialDesign:HintAssist.Hint="Channel name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="0,2,0,2" Text="{Binding Source={x:Static properties:Settings.Default}, Path=ChannelName}"/>
             <Separator Margin="3,10,3,10"/>
-            <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0:#}}"/>
+            <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0}}"/>
             <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="{Binding Source={x:Static properties:Settings.Default}, Path=GlobalVolume}"/>
             <Separator Margin="3,10,3,10"/>
             <StackPanel Orientation="Horizontal">

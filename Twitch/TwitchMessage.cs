@@ -30,6 +30,7 @@ namespace TTS_Chan.Twitch
         private Dictionary<string, string> Tags { get; }
         public string Text { get; }
         public string Color { get; }
+        public string SpeakableText;
 
         public TwitchMessage(IrcMessageParser parser)
         {
@@ -38,9 +39,11 @@ namespace TTS_Chan.Twitch
                 throw new Exception("Invalid message type");
             }
             Text = parser.Parameters[^1];
+            SpeakableText = Text;
             Tags = parser.Tags;
-            DisplayName = Tags["display-name"];
-            Userid = Tags["user-id"];
+            Username = parser.Source.Username;
+            DisplayName = Tags.ContainsKey("display-name") ? Tags["display-name"] : Username;
+            Userid = Tags.ContainsKey("user-id") ? Tags["user-id"] : "UNKNOWN";
             if(Tags.ContainsKey("color") && Tags["color"] != "")
             {
                 Color = Tags["color"];

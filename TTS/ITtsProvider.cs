@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TTS_Chan.Database;
+using TTS_Chan.Twitch;
 
 namespace TTS_Chan.TTS
 {
@@ -8,6 +10,6 @@ namespace TTS_Chan.TTS
         public Task Initialize();
         public string GetProviderName();
         public List<string> GetVoices();
-        public Task<TtsEntry> MakeEntry(string message, string voice, int rate, int pitch);
+        public Task<TtsEntry> MakeEntry(TwitchMessage message, UserVoice voice);
     }
 }

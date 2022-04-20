@@ -12,7 +12,7 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="MainWindow" Height="450" Width="800" Icon="/Resources/vrossaTTS.png">
+        Title="TTS-Chan" Height="450" Width="800" Icon="/Resources/vrossaTTS.png">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="70*"/>
@@ -29,7 +29,7 @@
         <StackPanel
             Grid.Row="1"
             Grid.Column="1">
-            <Button x:Name="ConnetionButton"
+            <Button x:Name="ConnectionButton"
                     Background="Green"
                     Foreground="White"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -39,8 +39,8 @@
                     materialDesign:ButtonProgressAssist.IsIndeterminate="False"
                     Margin="40,20,40,20"
                     VerticalAlignment="Top"
-                    HorizontalAlignment="Center" Click="ConnetionButton_Click">
-                <TextBlock x:Name="ConnetionButtonContent" Text="Content"/>
+                    HorizontalAlignment="Center" Click="ConnectionButton_Click">
+                <TextBlock x:Name="ConnectionButtonContent" Text="Content"/>
             </Button>
             <TextBlock 
                 x:Name="StatusTextBlock"
@@ -55,7 +55,7 @@
                 ToolTip="Manage users/voices"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Margin="4,0,4,0">
+                Margin="4,0,4,0" Click="DatabaseButton_Click">
                 <materialDesign:PackIcon Kind="Database"/>
             </Button>
             <Button

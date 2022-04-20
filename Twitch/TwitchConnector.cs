@@ -1,14 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using TTS_Chan.Database;
 using TTS_Chan.TTS;
 
 namespace TTS_Chan.Twitch
@@ -33,14 +31,15 @@ namespace TTS_Chan.Twitch
         public ClientWebSocket PubSubWebsocket { get; private set; }
         public TwitchConnectionStatus IrcStatus { get; private set; } = TwitchConnectionStatus.NotConnected;
         public TwitchConnectionStatus PubSubStatus { get; private set; } = TwitchConnectionStatus.NotConnected;
+        public static readonly List<string> KnownUsernames;
 
-        public MainWindow MainWindow;
+        private readonly MainWindow _mainWindow;
 
         public TwitchConnector(MainWindow mainWindow)
         {
             IrcSocket = new ClientWebSocket();
             PubSubWebsocket = new ClientWebSocket();
-            MainWindow = mainWindow;
+            _mainWindow = mainWindow;
             _cancellationSource = new CancellationTokenSource();
             _cancellationToken = _cancellationSource.Token;
             if (!Properties.Settings.Default.HasAuth) return;
@@ -49,6 +48,11 @@ namespace TTS_Chan.Twitch
             {
                 _loginUsername = _authCredential.UserName;
             }
+        }
+
+        static TwitchConnector()
+        {
+            KnownUsernames = new List<string>();
         }
 
         public async Task<bool> CheckAuth(Credential credential = null)
@@ -171,8 +175,8 @@ namespace TTS_Chan.Twitch
                     {
                         _cancellationSource.Cancel();
                         ChangeConnectionStatus(TwitchConnectionStatus.Error);
-                        ChangeConnectionStatus(TwitchConnectionStatus.Error, "Reocnnecting in 5 secodns....");
-                        await Task.Delay(5000);
+                        ChangeConnectionStatus(TwitchConnectionStatus.Error, "Reconnecting in 5 seconds....");
+                        await Task.Delay(5000, _cancellationToken);
                         await Connect(true);
                         await Authorize();
                         if (_joinedChannel != null)
@@ -208,8 +212,10 @@ namespace TTS_Chan.Twitch
                 case IrcCommands.RPL_ENDOFMOTD:
                     ChangeConnectionStatus(TwitchConnectionStatus.Connected, "Auth succeseful as " + message.Parameters[0]);
 #if DEBUG
+                    //await HandleIrcMessage(new IrcMessageParser(
+                    //    "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse semper semper ante. Nunc id elit fermentum, tincidunt quam vitae, congue massa. Aliquam eget felis non turpis bibendum iaculis. Mauris vitae iaculis ex, fringilla efficitur felis. Aenean non diam in libero varius commodo. Proin tincidunt porttitor magna in lobortis. Nam lobortis massa quis tellus consectetur, tempor maximus dui commodo. Donec ut nisl egestas, ultricies magna quis, egestas ante. Maecenas tempor ut eros ut semper. Fusce tempus, quam non vestibulum sagittis, nunc arcu tincidunt dui, eu aliquam tellus nunc vitae dolor. Sed gravida, lacus et malesuada bibendum, justo eros commodo elit, a dignissim neque felis nec augue. In viverra ultrices libero, et tincidunt quam pretium eu. Aliquam quam neque, tristique vitae tristique sit amet, pellentesque sed lorem. Maecenas sagittis eu ex sed porttitor. Suspendisse blandit scelerisque mauris ut accumsan."));
                     await HandleIrcMessage(new IrcMessageParser(
-                        "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse semper semper ante. Nunc id elit fermentum, tincidunt quam vitae, congue massa. Aliquam eget felis non turpis bibendum iaculis. Mauris vitae iaculis ex, fringilla efficitur felis. Aenean non diam in libero varius commodo. Proin tincidunt porttitor magna in lobortis. Nam lobortis massa quis tellus consectetur, tempor maximus dui commodo. Donec ut nisl egestas, ultricies magna quis, egestas ante. Maecenas tempor ut eros ut semper. Fusce tempus, quam non vestibulum sagittis, nunc arcu tincidunt dui, eu aliquam tellus nunc vitae dolor. Sed gravida, lacus et malesuada bibendum, justo eros commodo elit, a dignissim neque felis nec augue. In viverra ultrices libero, et tincidunt quam pretium eu. Aliquam quam neque, tristique vitae tristique sit amet, pellentesque sed lorem. Maecenas sagittis eu ex sed porttitor. Suspendisse blandit scelerisque mauris ut accumsan."));
+                        "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :good thing my internet is stable enough for ossa strim vrossaComfy"));
 #endif
                     break;
 
@@ -226,31 +232,9 @@ namespace TTS_Chan.Twitch
         private async Task OnPRIVSMG(IrcMessageParser message)
         {
             var msg = new TwitchMessage(message);
-            MainWindow.Dispatcher.Invoke(() => { MainWindow.AddMessage(msg); });
-            var userVoice = await DatabaseManager.Context.UserVoices.Where(userVoice => userVoice.UserId == msg.Userid).FirstOrDefaultAsync(CancellationToken.None);
-            if (userVoice == null)
-            {
-                var foundByDisplayName = await DatabaseManager.Context.UserVoices.Where(voice1 => voice1.UserId == null && voice1.UserDisplayName == msg.DisplayName).FirstOrDefaultAsync(CancellationToken.None);
-                if (foundByDisplayName != null)
-                {
-                    userVoice = foundByDisplayName;
-                }
-            }
-
-            if (userVoice == null)
-            {
-                // TODO: Default voice from settings
-                var microsoftProvider = TtsManager.GetProvider("Microsoft");
-                var voice = microsoftProvider.GetVoices()[0];
-                var entry = await microsoftProvider.MakeEntry(message.Parameters[^1], voice, 10, 1);
-                TtsManager.AddToQueue(entry);
-            }
-            else
-            {
-                var microsoftProvider = TtsManager.GetProvider(userVoice.VoiceProvider);
-                var entry = await microsoftProvider.MakeEntry(message.Parameters[^1], userVoice.VoiceName, 10, 1);
-                TtsManager.AddToQueue(entry);
-            }
+            KnownUsernames.Add(msg.Username);
+            _mainWindow.Dispatcher.Invoke(() => { _mainWindow.AddMessage(msg); });
+            await TtsManager.ProcessMessage(msg);
         }
 
         private void ChangeConnectionStatus(TwitchConnectionStatus status, string message = null)
