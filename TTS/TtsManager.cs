@@ -17,7 +17,11 @@ namespace TTS_Chan.TTS
 
         public static void Init()
         {
-            _outputDevice = new WaveOutEvent();
+            _outputDevice = new WaveOutEvent()
+            {
+                DesiredLatency = 500,
+                NumberOfBuffers = 32
+            };
             _outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
@@ -26,7 +30,7 @@ namespace TTS_Chan.TTS
             if (Queue.Count == 0) return;
             var entry = Queue.Dequeue();
             _outputDevice.Init(entry.Provider);
-            _outputDevice.Volume = (float)Properties.Settings.Default.GlobalVolume / 100;
+            //_outputDevice.Volume = (float)Properties.Settings.Default.GlobalVolume / 100;
             _outputDevice.Play();
         }
 
@@ -46,15 +50,8 @@ namespace TTS_Chan.TTS
             return Providers.Keys.ToList();
         }
 
-        public static WaveFormat GetOutputFormat()
-        {
-            return _outputDevice.OutputWaveFormat;
-        }
-
         public static async Task ProcessMessage(TwitchMessage message)
         {
-            FilterMessageText(message);
-
             var userVoice = await DatabaseManager.Context.UserVoices.Where(userVoice => userVoice.UserId == message.Userid).FirstOrDefaultAsync(CancellationToken.None);
             if (userVoice == null)
             {
@@ -66,6 +63,11 @@ namespace TTS_Chan.TTS
                     await DatabaseManager.Context.SaveChangesAsync();
                 }
             }
+            else if (userVoice.Username != message.Username)
+            {
+                userVoice.Username = message.Username;
+                await DatabaseManager.Context.SaveChangesAsync();
+            }
 
             if (userVoice == null)
             {
@@ -76,11 +78,6 @@ namespace TTS_Chan.TTS
             }
             else
             {
-
-                if (userVoice.Username != message.Username)
-                {
-                    userVoice.Username = message.Username;
-                }
                 if (userVoice.IsMuted)
                 {
                     return;
@@ -89,11 +86,6 @@ namespace TTS_Chan.TTS
                 var entry = await microsoftProvider.MakeEntry(message, userVoice);
                 AddToQueue(entry);
             }
-        }
-
-        public static void FilterMessageText(TwitchMessage message)
-        {
-            message.SpeakableText = message.Text;
         }
 
         public static void AddToQueue(TtsEntry entry)

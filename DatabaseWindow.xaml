@@ -5,7 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Database management" Height="450" Width="800">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="Database management" Height="450" Width="800" Closed="Window_Closed">
     <Grid>
         <materialDesign:Card>
             <TabControl
@@ -13,68 +20,85 @@
                 <TabItem>
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Users"/>
-                            <materialDesign:PackIcon Kind="AccountSearch" Margin="4,0,4,0" />
+                            <TextBlock Text="Users" Style="{DynamicResource MaterialDesignBody1TextBlock}" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="AccountSearch" Margin="4,0,4,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-                        <materialDesign:DialogHost x:Name="AddUserDialog" DialogTheme="Inherit">
-                            <materialDesign:DialogHost.DialogContent>
-                                <StackPanel Margin="16">
-                                    <TextBlock Text="Add a new fruit." />
-                                    <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch" x:Name="FruitTextBox" />
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True" Margin="0 8 8 0" Content="ACCEPT" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-                                            <Button.CommandParameter>
-                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                                    True
-                                                </system:Boolean>
-                                            </Button.CommandParameter>
-                                        </Button>
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" Margin="0 8 8 0" Content="CANCEL" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-                                            <Button.CommandParameter>
-                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
-                                                    False
-                                                </system:Boolean>
-                                            </Button.CommandParameter>
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </materialDesign:DialogHost.DialogContent>
-                            <Border BorderThickness="1" BorderBrush="{DynamicResource PrimaryHueMidBrush}" MinHeight="256" ClipToBounds="True">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
-                                        <Button
-                                            Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
-                                            VerticalAlignment="Bottom"
-                                            HorizontalAlignment="Right"
-                                            Margin="4 4 4 4"
-                                            Content="{materialDesign:PackIcon Kind=Plus, Size=22}" />
-                                    </StackPanel>
-                                    <ListBox x:Name="FruitListBox" Grid.Row="0">
-                                        <ListBoxItem Content="Apple" />
-                                        <ListBoxItem Content="Banana" />
-                                        <ListBoxItem Content="Pear" />
-                                    </ListBox>
-                                </Grid>
-                            </Border>
-                        </materialDesign:DialogHost>
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <DataGrid x:Name="UsersGrid" Grid.Row="0" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="False" CanUserAddRows="False" SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Header="Username"  IsReadOnly="True" Binding="{Binding Username, Mode=OneWay}"/>
+                                <DataGridCheckBoxColumn Width="90" Header="Is Muted" IsReadOnly="True" Binding="{Binding IsMuted, Mode=OneWay}"/>
+                                <DataGridTextColumn Width="120" Header="Voice provider"  IsReadOnly="True" Binding="{Binding VoiceProvider, Mode=OneWay}"/>
+                                <DataGridTextColumn Width="180" Header="Voice name"  IsReadOnly="True" Binding="{Binding VoiceName, Mode=OneWay}"/>
+                                <DataGridTextColumn Width="60" Header="Rate"  IsReadOnly="True" Binding="{Binding Rate, Mode=OneWay}"/>
+                                <DataGridTextColumn Width="70" Header="Pitch"  IsReadOnly="True" Binding="{Binding Pitch, Mode=OneWay}"/>
+                                <DataGridTemplateColumn Width="90">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Height="25" Click="UserDataGridEdit" Content="Edit" Margin="-4,-30,-4,-30"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
+                            <Button
+                                Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                Margin="4 4 4 4"
+                                Content="{materialDesign:PackIcon Kind=Plus, Size=22}" Click="AddButton_Click" />
+                        </StackPanel>
                     </Grid>
                 </TabItem>
                 <TabItem>
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Substitutions"/>
-                            <materialDesign:PackIcon Kind="MessageReplyText" Margin="4,0,4,0" />
+                            <TextBlock Text="Substitutions" Style="{DynamicResource MaterialDesignBody1TextBlock}" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="MessageReplyText" Margin="4,0,4,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <TextBox IsReadOnly="True" Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value"/>
+                            <TextBlock Margin="4,0,4,0">
+                                <Hyperlink NavigateUri="https://regex101.com/r/RHiPsL/1">Interactive tool</Hyperlink>
+                            </TextBlock>
+                            <Button x:Name="PopulateButton" Width="auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Populate with useful values" Margin="0,6,0,4" Click="PopulateButton_Click"/>
+                        </StackPanel>
+                        <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*"
+                                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"
+                                                    Header="Pattern"
+                                                    Binding="{Binding Pattern, Mode=TwoWay}"/>
+                                <DataGridCheckBoxColumn ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                                                        Width="90"
+                                                        Header="Is Regex"
+                                                        Binding="{Binding IsRegex, Mode=TwoWay}"/>
+                                <DataGridTextColumn Width="*"
+                                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"
+                                                    Header="Replacement"
+                                                    Binding="{Binding Replacement, Mode=TwoWay}"/>
+                                <DataGridTextColumn Width="*"
+                                                    ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                                    EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"
+                                                    Header="Comment"
+                                                    Binding="{Binding Comment, Mode=TwoWay}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </TabItem>
             </TabControl>

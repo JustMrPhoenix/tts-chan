@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TTS_Chan.Components;
-using TTS_Chan.Database;
 using TTS_Chan.TTS;
 
 namespace TTS_Chan

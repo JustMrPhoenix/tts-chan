@@ -6,6 +6,7 @@ namespace TTS_Chan.Database
     public class DatabaseContext : DbContext
     {
         public DbSet<UserVoice> UserVoices { get; set; }
+        public DbSet<MessageSubstitution> MessageSubstitutions { get; set; }
         private string DbPath { get; }
 
         public DatabaseContext()

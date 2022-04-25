@@ -1,9 +1,16 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using BespokeFusion;
+using Google.Cloud.TextToSpeech.V1;
+using TTS_Chan.TTS;
+using TTS_Chan.TTS.TTS_Providers;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TTS_Chan
 {
@@ -20,18 +27,20 @@ namespace TTS_Chan
             _twitchConnector = twitchConnector;
             try
             {
-                var credential = CredentialManager.ReadCredential(CredentialManager.AppName);
-                if (credential == null)
-                    return;
-                TwitchAuthInputBox.Password = credential.Password;
-                _lastValidatedToken = credential.Password;
-                TwitchAuthInputBox.SetCurrentValue(HintAssist.ForegroundProperty, Brushes.LightGreen);
-                TwitchAuthInputBox.SetCurrentValue(TextFieldAssist.UnderlineBrushProperty, Brushes.LightGreen);
+                var twitchCredential = CredentialManager.ReadCredential(CredentialManager.TwitchAuthName);
+                if (twitchCredential != null)
+                {
+                    TwitchAuthInputBox.Password = twitchCredential.Password;
+                    _lastValidatedToken = twitchCredential.Password;
+                    TwitchAuthInputBox.SetCurrentValue(HintAssist.ForegroundProperty, Brushes.LightGreen);
+                    TwitchAuthInputBox.SetCurrentValue(TextFieldAssist.UnderlineBrushProperty, Brushes.LightGreen);
+                }
             }
             catch (Exception)
             {
                 // ignored
             }
+            ValidateGoogleCreds();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -48,10 +57,60 @@ namespace TTS_Chan
             _ = CheckAuth();
         }
 
+        private void ValidateGoogleCreds(string credentials = null)
+        {
+            string usingCredentials = null;
+            try
+            {
+                if (credentials == null)
+                {
+                    if (!File.Exists(GoogleTtsProvider.CredentialsPath))
+                    {
+                        GoogleAccountStatusBlock.Foreground = Brushes.IndianRed;
+                        GoogleAccountStatusBlock.Text = "Invalid";
+                        return;
+                    }
+                    else
+                    {
+                        usingCredentials = File.ReadAllText(GoogleTtsProvider.CredentialsPath);
+                    }
+                }
+                else
+                {
+                    usingCredentials = credentials;
+                }
+
+                var builder = new TextToSpeechClientBuilder
+                {
+                    JsonCredentials = usingCredentials
+                };
+
+                var client = builder.Build();
+                client.ListVoices(new ListVoicesRequest());
+                GoogleAccountStatusBlock.Foreground = Brushes.ForestGreen;
+                GoogleAccountStatusBlock.Text = "Valid";
+                if (credentials != null)
+                {
+                    MaterialMessageBox.Show("You have provided valid Google cloud credentials.\nPlease note that TTS-Chan lists all available google voices including Wavenet voices.\n Those voices have a separate billing strategy please consult google API pricing page", "Google Authentication");
+                }
+            }
+            catch (Exception)
+            {
+                GoogleAccountStatusBlock.Foreground = Brushes.IndianRed;
+                GoogleAccountStatusBlock.Text = "Invalid";
+                return;
+            }
+
+            if (File.Exists(GoogleTtsProvider.CredentialsPath)) return;
+            File.WriteAllText(GoogleTtsProvider.CredentialsPath, usingCredentials);
+            TtsManager.GetProvider(GoogleTtsProvider.Name).Initialize();
+            MainWindow.Instance.AddLog("Google TTS reloaded!");
+        }
+
         private async Task CheckAuth()
         {
             if(TwitchAuthInputBox.Password == _lastValidatedToken) { return; }
-            Credential credentials = new(CredentialType.Generic, CredentialManager.AppName, "", TwitchAuthInputBox.Password);
+            Credential credentials = new(CredentialType.Generic, CredentialManager.TwitchAuthName, "", TwitchAuthInputBox.Password);
             _lastValidatedToken = TwitchAuthInputBox.Password;
             var checkResults = await _twitchConnector.CheckAuth(credentials);
             if(checkResults)
@@ -69,6 +128,22 @@ namespace TTS_Chan
                 DialogueTextBox.Text = "Twitch authorization failed!";
                 DialogueButtonText.Text = "Unpog";
                 _ = DialogHost.ShowDialog(DialogHost.DialogContent!);
+            }
+        }
+
+        private void OpenGAuthFile_Click(object sender, RoutedEventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON files (*.json)|*.json";
+            openFileDialog.FilterIndex = 2;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var fileStream = openFileDialog.OpenFile();
+                using var reader = new StreamReader(fileStream);
+                var fileContent = reader.ReadToEnd();
+                ValidateGoogleCreds(fileContent);
             }
         }
     }

@@ -6,16 +6,22 @@
       <Value Profile="(Default)">Pex_is_cute</Value>
     </Setting>
     <Setting Name="AutoJoin" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AutoConnect" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HasAuth" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="GlobalVolume" Type="System.Double" Scope="User">
       <Value Profile="(Default)">85</Value>
+    </Setting>
+    <Setting Name="MessageSymbolLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="DisableTwitchEmotes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

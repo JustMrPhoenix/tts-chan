@@ -1,10 +1,8 @@
 ﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using Microsoft.EntityFrameworkCore;
 using TTS_Chan.Database;
+using TTS_Chan.TTS;
 using TTS_Chan.Twitch;
 
 namespace TTS_Chan.Components
@@ -47,6 +45,11 @@ namespace TTS_Chan.Components
                     DatabaseManager.Context.SaveChanges();
                 }
             }
+            else if (userVoice.Username != TwitchMessage.Username)
+            {
+                userVoice.Username = TwitchMessage.Username;
+                DatabaseManager.Context.SaveChanges();
+            }
 
             if (userVoice == null)
             {
@@ -62,8 +65,52 @@ namespace TTS_Chan.Components
             }
 
             var voiceWindow = new UserVoiceWindow(userVoice);
-            voiceWindow.ShowDialog();
-            DatabaseManager.Context.SaveChangesAsync();
+            var result = voiceWindow.ShowDialog();
+            if (result == true)
+            {
+                DatabaseManager.Context.SaveChanges();
+            }
+        }
+
+        private void RepeatButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = TtsManager.ProcessMessage(TwitchMessage);
+        }
+
+        private void MuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userVoice = DatabaseManager.Context.UserVoices.FirstOrDefault(userVoice => userVoice.UserId == TwitchMessage.Userid);
+            if (userVoice == null)
+            {
+                var foundByUsername = DatabaseManager.Context.UserVoices.FirstOrDefault(voice1 => voice1.UserId == null && voice1.Username == TwitchMessage.Username);
+                if (foundByUsername != null)
+                {
+                    userVoice = foundByUsername;
+                    foundByUsername.UserId = TwitchMessage.Userid;
+                    DatabaseManager.Context.SaveChanges();
+                }
+            }
+            else if (userVoice.Username != TwitchMessage.Username)
+            {
+                userVoice.Username = TwitchMessage.Username;
+                DatabaseManager.Context.SaveChanges();
+            }
+
+            if (userVoice == null)
+            {
+                userVoice = new UserVoice
+                {
+                    IsMuted = true,
+                    Pitch = 0,
+                    Rate = 0,
+                    UserId = TwitchMessage.Userid,
+                    Username = Username
+                };
+                DatabaseManager.Context.UserVoices.Add(userVoice);
+            }
+
+            userVoice.IsMuted = true;
+            DatabaseManager.Context.SaveChanges();
         }
     }
 }

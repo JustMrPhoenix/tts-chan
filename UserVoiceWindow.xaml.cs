@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using BespokeFusion;
 using NAudio.Wave;
 using TTS_Chan.Database;
@@ -26,13 +25,22 @@ namespace TTS_Chan
         private string _previewPrompt = "Hello streamer. This is a preview for user %username%. Using %provider% %voice%";
         public UserVoiceWindow(UserVoice userVoice)
         {
+            waveOut = new WaveOut()
+            {
+                DesiredLatency = 500,
+                NumberOfBuffers = 32
+            };
             UserVoice = userVoice;
             DataContext = UserVoice;
             InitializeComponent();
             var providers = TtsManager.GetProviders();
             ProviderComboBox.ItemsSource = providers;
             ProviderComboBox.SelectedItem = providers[0];
-            waveOut = new WaveOut();
+            UsernameComboBox.ItemsSource = TwitchConnector.KnownUsernames;
+            if (UserVoice.UserId != null)
+            {
+                UsernameComboBox.IsEnabled = false;
+            }
         }
 
         private void ProviderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -41,10 +49,12 @@ namespace TTS_Chan
             {
                 return;
             }
-            VoiceNameComboBox.Items.Clear();
             var voices = TtsManager.GetProvider((string) ProviderComboBox.SelectedValue).GetVoices();
             VoiceNameComboBox.ItemsSource = voices;
-            VoiceNameComboBox.SelectedItem = voices[0];
+            if (!voices.Contains(UserVoice.VoiceName))
+            {
+                VoiceNameComboBox.SelectedItem = voices[0];
+            }
         }
 
         private void PreviewPromptButton_Click(object sender, RoutedEventArgs e)
@@ -64,7 +74,7 @@ namespace TTS_Chan
                     Margin = new Thickness(20, 20, 20, 20),
                     Text = _previewPrompt
                 };
-                textBox.TextChanged += (o, args) =>
+                textBox.TextChanged += (_, _) =>
                 {
                     _previewPrompt = textBox.Text;
                 };
@@ -73,9 +83,9 @@ namespace TTS_Chan
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Content = "Play"
                 };
-                button.Click += (o, args) =>
+                button.Click += (_, _) =>
                 {
-                    DoPreview(textBox.Text);
+                    _ = DoPreview(textBox.Text);
                 };
                 var msgContent = new StackPanel()
                 {
@@ -87,6 +97,7 @@ namespace TTS_Chan
                 
                 msg.MessageControl.Content = msgContent;
                 msg.Show();
+                msg.Dispose();
             });
 
         }
@@ -121,13 +132,18 @@ namespace TTS_Chan
             }
             else
             {
-                DoPreview(_previewPrompt);
+                _ = DoPreview(_previewPrompt);
             }
+        }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             waveOut?.Dispose();
         }
+
     }
 }

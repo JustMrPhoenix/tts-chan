@@ -37,7 +37,7 @@ namespace TTS_Chan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoJoin {
             get {
                 return ((bool)(this["AutoJoin"]));
@@ -49,7 +49,7 @@ namespace TTS_Chan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoConnect {
             get {
                 return ((bool)(this["AutoConnect"]));
@@ -80,6 +80,30 @@ namespace TTS_Chan.Properties {
             }
             set {
                 this["GlobalVolume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MessageSymbolLimit {
+            get {
+                return ((int)(this["MessageSymbolLimit"]));
+            }
+            set {
+                this["MessageSymbolLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableTwitchEmotes {
+            get {
+                return ((bool)(this["DisableTwitchEmotes"]));
+            }
+            set {
+                this["DisableTwitchEmotes"] = value;
             }
         }
     }

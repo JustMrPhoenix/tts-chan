@@ -10,7 +10,7 @@ namespace TTS_Chan
 {
     public static class CredentialManager
     {
-        public static readonly string AppName = "TTS_Chan.TwitchAuth";
+        public const string TwitchAuthName = "TTS_Chan.TwitchAuth";
         public static TTS_Chan.Credential ReadCredential(string applicationName)
         {
             var read = CredRead(applicationName, CredentialType.Generic, 0, out var nCredPtr);

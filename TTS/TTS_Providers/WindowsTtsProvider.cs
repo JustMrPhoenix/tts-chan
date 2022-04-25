@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +20,7 @@ namespace TTS_Chan.TTS.TTS_Providers
 {
     public class WindowsTtsProvider: ITtsProvider
     {
+        public const string Name = "Microsoft";
         public async Task Initialize()
         {
             await Task.Factory.StartNew(PerformTtsImport);
@@ -92,7 +94,7 @@ namespace TTS_Chan.TTS.TTS_Providers
         }
         public string GetProviderName()
         {
-            return "Microsoft";
+            return Name;
         }
 
         public List<string> GetVoices()
@@ -111,7 +113,7 @@ namespace TTS_Chan.TTS.TTS_Providers
             return await Task.Factory.StartNew(() =>
             {
                 // Yoinked from https://stackoverflow.com/a/47956034
-                const SpeechVoiceSpeakFlags speechFlags = SpeechVoiceSpeakFlags.SVSFlagsAsync;
+                const SpeechVoiceSpeakFlags speechFlags = SpeechVoiceSpeakFlags.SVSFlagsAsync | SpeechVoiceSpeakFlags.SVSFPersistXML;
                 var spVoice = new SpVoice();
                 var wave = new SpMemoryStream();
                 var voices = spVoice.GetVoices();
@@ -137,12 +139,16 @@ namespace TTS_Chan.TTS.TTS_Providers
                     spVoice.Voice = useVoice;
                     wave.Format.Type = SpeechAudioFormatType.SAFT48kHz16BitMono;
                     spVoice.AudioOutputStream = wave;
-                    spVoice.Speak(message.Text, speechFlags);
+                    var speakXml =
+                        $"<pitch absmiddle=\"{Math.Clamp((voice?.Pitch ?? 0) / 10, -10, 10)}\">{SecurityElement.Escape(message.SpeakableText)}</pitch>";
+                    spVoice.Speak(speakXml, speechFlags);
                     spVoice.WaitUntilDone(Timeout.Infinite);
                     
                     var bytes = (byte[]) wave.GetData();
                     IWaveProvider provider = new RawSourceWaveStream(bytes, 0, bytes.Length, new WaveFormat(48000, 16, 1));
-                    return new TtsEntry(provider, voice?.Pitch ?? 0);
+                    var entry = new TtsEntry(provider);
+                    // WaveFileWriter.CreateWaveFile(@"Z:\test.wav", entry.Provider);
+                    return entry;
                 }
                 finally
                 {

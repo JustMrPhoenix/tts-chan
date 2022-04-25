@@ -12,6 +12,7 @@ namespace TTS_Chan
         {
             TtsManager.Init();
             TtsManager.AddProvider(new WindowsTtsProvider());
+            TtsManager.AddProvider(new GoogleTtsProvider());
         }
     }
 }
