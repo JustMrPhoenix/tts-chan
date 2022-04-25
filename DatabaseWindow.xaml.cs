@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Navigation;
 using Microsoft.EntityFrameworkCore;
 using TTS_Chan.Database;
 
@@ -87,6 +90,18 @@ namespace TTS_Chan
         private void Window_Closed(object sender, System.EventArgs e)
         {
             DatabaseManager.Context.SaveChanges();
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Hyperlink hl = (Hyperlink)sender;
+            string navigateUri = hl.NavigateUri.ToString();
+            var psi = new ProcessStartInfo
+            {
+                FileName = navigateUri,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
         }
     }
 }
