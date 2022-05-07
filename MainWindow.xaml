@@ -40,7 +40,7 @@
                     Margin="40,20,40,20"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center" Click="ConnectionButton_Click">
-                <TextBlock x:Name="ConnectionButtonContent" Text="Content"/>
+                <TextBlock x:Name="ConnectionButtonContent" Text="Connect"/>
             </Button>
             <TextBlock 
                 x:Name="StatusTextBlock"

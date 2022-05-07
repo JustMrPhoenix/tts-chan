@@ -51,7 +51,7 @@ namespace TTS_Chan
             }
             var voices = TtsManager.GetProvider((string) ProviderComboBox.SelectedValue).GetVoices();
             VoiceNameComboBox.ItemsSource = voices;
-            if (!voices.Contains(UserVoice.VoiceName))
+            if (!voices.Contains(UserVoice.VoiceName) && voices.Count != 0)
             {
                 VoiceNameComboBox.SelectedItem = voices[0];
             }

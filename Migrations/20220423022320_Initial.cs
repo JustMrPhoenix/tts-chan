@@ -14,7 +14,6 @@ namespace TTS_Chan.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Pattern = table.Column<string>(type: "TEXT", nullable: true),
                     Replacement = table.Column<string>(type: "TEXT", nullable: true),
-                    Comment = table.Column<string>(type: "TEXT", nullable: true),
                     IsRegex = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

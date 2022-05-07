@@ -14,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
-        Title="Settings" Height="500" Width="320" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
+        Title="Settings" Height="600" Width="320" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
     <Grid>
         <materialDesign:DialogHost x:Name="DialogHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsOpen="False">
             <materialDesign:DialogHost.DialogContent>
@@ -49,6 +49,13 @@
             <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0}}"/>
             <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="{Binding Source={x:Static properties:Settings.Default}, Path=GlobalVolume}"/>
             <Separator Margin="3,10,3,10"/>
+            <Button x:Name="DefaultVoiceButton" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="ChangeDefaultVoiceParameters" IsEnabled="True" Click="DefaultVoiceButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Default voice settings"/>
+                    <materialDesign:PackIcon Kind="AccountVoice" />
+                </StackPanel>
+            </Button>
+            <Separator Margin="3,10,3,10"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Google credentials:"/>
                 <TextBlock x:Name="GoogleAccountStatusBlock" Text="Invalid" Foreground="IndianRed" Margin="4,0,0,0"/>
@@ -63,13 +70,14 @@
             <StackPanel Orientation="Horizontal">
                 <ToggleButton x:Name="AuthToggle" Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=HasAuth}"/>
                 <TextBlock Text="Authorize as channel"/>
+                <materialDesign:PackIcon Kind="Help" ToolTip="This features is not currently used."/>
             </StackPanel>
             <PasswordBox x:Name="TwitchAuthInputBox"
                      materialDesign:HintAssist.Hint="Twitch OAuth Token"
                      materialDesign:HintAssist.Foreground="IndianRed"
                      materialDesign:TextFieldAssist.UnderlineBrush="IndianRed"
                      Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,4,0,4" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" LostFocus="TwitchAuthInputBox_LostFocus" KeyDown="TwitchAuthInputBox_KeyDown"/>
-            <Button x:Name="GenerateToken" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Generate twitch token by opening browser" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" >
+            <Button x:Name="GenerateToken" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Generate twitch token by opening browser" IsEnabled="{Binding IsChecked, ElementName=AuthToggle}" Click="GenerateToken_Click" >
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Generate token"/>
                     <materialDesign:PackIcon Kind="Account" Margin="4,0,0,0" />

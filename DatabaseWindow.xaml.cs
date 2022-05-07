@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
@@ -89,6 +90,11 @@ namespace TTS_Chan
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
+            foreach (var ms in DatabaseManager.Context.MessageSubstitutions.Where(ms => ms.Pattern == ""))
+            {
+                DatabaseManager.Context.MessageSubstitutions.Remove(ms);
+            }
+            DatabaseManager.EnsureDefaultVoice();
             DatabaseManager.Context.SaveChanges();
         }
 

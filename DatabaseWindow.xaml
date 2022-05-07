@@ -77,6 +77,11 @@
                         </StackPanel>
                         <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True">
                             <DataGrid.Columns>
+                                <DataGridCheckBoxColumn ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                                                        Width="90"
+                                                        Header="Is Enabled"
+                                                        Binding="{Binding IsEnabled, Mode=TwoWay}"/>
                                 <DataGridTextColumn Width="*"
                                                     ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
                                                     EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"

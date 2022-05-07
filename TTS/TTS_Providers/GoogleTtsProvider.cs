@@ -73,7 +73,7 @@ namespace TTS_Chan.TTS.TTS_Providers
                     SpeakingRate = rate,
                     AudioEncoding = AudioEncoding.Linear16,
                     SampleRateHertz = 48000,
-                    Pitch = (voice?.Pitch ?? 0) / 5
+                    Pitch = voice.Pitch / 5
                 },
                 Input = new SynthesisInput
                 {

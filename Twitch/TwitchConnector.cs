@@ -220,7 +220,7 @@ namespace TTS_Chan.Twitch
                     break;
 
                 case IrcCommands.RPL_ENDOFMOTD:
-                    ChangeConnectionStatus(TwitchConnectionStatus.Connected, "Auth succeseful as " + message.Parameters[0]);
+                    ChangeConnectionStatus(TwitchConnectionStatus.Connected, "Auth successful as " + message.Parameters[0]);
 #if DEBUG
                     //await HandleIrcMessage(new IrcMessageParser(
                     //    "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse semper semper ante. Nunc id elit fermentum, tincidunt quam vitae, congue massa. Aliquam eget felis non turpis bibendum iaculis. Mauris vitae iaculis ex, fringilla efficitur felis. Aenean non diam in libero varius commodo. Proin tincidunt porttitor magna in lobortis. Nam lobortis massa quis tellus consectetur, tempor maximus dui commodo. Donec ut nisl egestas, ultricies magna quis, egestas ante. Maecenas tempor ut eros ut semper. Fusce tempus, quam non vestibulum sagittis, nunc arcu tincidunt dui, eu aliquam tellus nunc vitae dolor. Sed gravida, lacus et malesuada bibendum, justo eros commodo elit, a dignissim neque felis nec augue. In viverra ultrices libero, et tincidunt quam pretium eu. Aliquam quam neque, tristique vitae tristique sit amet, pellentesque sed lorem. Maecenas sagittis eu ex sed porttitor. Suspendisse blandit scelerisque mauris ut accumsan."));
@@ -247,7 +247,11 @@ namespace TTS_Chan.Twitch
         {
             var msg = new TwitchMessage(message);
             msg.ApplyFilters();
-            KnownUsernames.Add(msg.Username);
+            if (!KnownUsernames.Contains(msg.Username))
+            {
+                KnownUsernames.Add(msg.Username);
+            }
+
             if (msg.SpeakableText == "") return;
             _mainWindow.Dispatcher.Invoke(() => { _mainWindow.AddMessage(msg); });
             await TtsManager.ProcessMessage(msg);

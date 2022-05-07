@@ -106,9 +106,8 @@ namespace TTS_Chan.TTS.TTS_Providers
             Marshal.ReleaseComObject(synth);
             return voicesList;
         }
-
-#nullable enable
-        public async Task<TtsEntry> MakeEntry(TwitchMessage message, UserVoice? voice)
+        
+        public async Task<TtsEntry> MakeEntry(TwitchMessage message, UserVoice voice)
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -120,34 +119,25 @@ namespace TTS_Chan.TTS.TTS_Providers
                 try
                 {
                     spVoice.Volume = 100;
-                    spVoice.Rate = Math.Max(-10, Math.Min(10, (voice?.Rate ?? 0) / 10));
-                    SpObjectToken? useVoice;
-                    if (voice == null)
+                    spVoice.Rate = Math.Max(-10, Math.Min(10, voice.Rate / 10));
+                    var useVoice = voices.Cast<SpObjectToken>()
+                        .FirstOrDefault(voiceToken => voiceToken.GetAttribute("Name") == voice.VoiceName);
+                    if (useVoice == null)
                     {
                         useVoice = voices.Item(0);
-                    }
-                    else
-                    {
-                        useVoice = voices.Cast<SpObjectToken>()
-                            .FirstOrDefault(voiceToken => voiceToken.GetAttribute("Name") == voice.VoiceName);
-                        if (useVoice == null)
-                        {
-                            useVoice = voices.Item(0);
-                            MainWindow.Instance.AddLog($"Using fallback voice for {message.Username}");
-                        }
+                        MainWindow.Instance.AddLog($"Using fallback voice for {message.Username}");
                     }
                     spVoice.Voice = useVoice;
                     wave.Format.Type = SpeechAudioFormatType.SAFT48kHz16BitMono;
                     spVoice.AudioOutputStream = wave;
                     var speakXml =
-                        $"<pitch absmiddle=\"{Math.Clamp((voice?.Pitch ?? 0) / 10, -10, 10)}\">{SecurityElement.Escape(message.SpeakableText)}</pitch>";
+                        $"<pitch absmiddle=\"{Math.Clamp(voice.Pitch / 10, -10, 10)}\">{SecurityElement.Escape(message.SpeakableText)}</pitch>";
                     spVoice.Speak(speakXml, speechFlags);
                     spVoice.WaitUntilDone(Timeout.Infinite);
                     
                     var bytes = (byte[]) wave.GetData();
                     IWaveProvider provider = new RawSourceWaveStream(bytes, 0, bytes.Length, new WaveFormat(48000, 16, 1));
                     var entry = new TtsEntry(provider);
-                    // WaveFileWriter.CreateWaveFile(@"Z:\test.wav", entry.Provider);
                     return entry;
                 }
                 finally
@@ -158,6 +148,5 @@ namespace TTS_Chan.TTS.TTS_Providers
                 }
             });
         }
-#nullable disable
     }
 }

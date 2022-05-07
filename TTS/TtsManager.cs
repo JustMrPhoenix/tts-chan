@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NAudio.Wave;
 using TTS_Chan.Database;
+using TTS_Chan.Properties;
 using TTS_Chan.Twitch;
 
 namespace TTS_Chan.TTS
@@ -69,23 +70,16 @@ namespace TTS_Chan.TTS
                 await DatabaseManager.Context.SaveChangesAsync();
             }
 
-            if (userVoice == null)
+            userVoice ??= await DatabaseManager.Context.UserVoices
+                .Where(userVoice => userVoice.UserId == "_default" && userVoice.Username == "_default")
+                .FirstOrDefaultAsync(CancellationToken.None);
+            if (userVoice.IsMuted)
             {
-                // TODO: Default voice from settings
-                var microsoftProvider = GetProvider("Microsoft");
-                var entry = await microsoftProvider.MakeEntry(message, null);
-                AddToQueue(entry);
+                return;
             }
-            else
-            {
-                if (userVoice.IsMuted)
-                {
-                    return;
-                }
-                var microsoftProvider = GetProvider(userVoice.VoiceProvider);
-                var entry = await microsoftProvider.MakeEntry(message, userVoice);
-                AddToQueue(entry);
-            }
+            var microsoftProvider = GetProvider(userVoice.VoiceProvider);
+            var entry = await microsoftProvider.MakeEntry(message, userVoice);
+            AddToQueue(entry);
         }
 
         public static void AddToQueue(TtsEntry entry)

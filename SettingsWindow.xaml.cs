@@ -1,15 +1,22 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using BespokeFusion;
 using Google.Cloud.TextToSpeech.V1;
+using Microsoft.EntityFrameworkCore;
+using TTS_Chan.Database;
+using TTS_Chan.Properties;
 using TTS_Chan.TTS;
 using TTS_Chan.TTS.TTS_Providers;
+using TTS_Chan.Twitch;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace TTS_Chan
@@ -19,9 +26,9 @@ namespace TTS_Chan
     /// </summary>
     public partial class SettingsWindow
     {
-        private readonly Twitch.TwitchConnector _twitchConnector;
+        private readonly TwitchConnector _twitchConnector;
         private string _lastValidatedToken;
-        public SettingsWindow(Twitch.TwitchConnector twitchConnector)
+        public SettingsWindow(TwitchConnector twitchConnector)
         {
             InitializeComponent();
             _twitchConnector = twitchConnector;
@@ -41,6 +48,7 @@ namespace TTS_Chan
                 // ignored
             }
             ValidateGoogleCreds();
+            var providers = TtsManager.GetProviders();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -138,13 +146,26 @@ namespace TTS_Chan
             openFileDialog.FilterIndex = 2;
             openFileDialog.RestoreDirectory = true;
 
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                var fileStream = openFileDialog.OpenFile();
-                using var reader = new StreamReader(fileStream);
-                var fileContent = reader.ReadToEnd();
-                ValidateGoogleCreds(fileContent);
-            }
+            if (openFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            var fileStream = openFileDialog.OpenFile();
+            using var reader = new StreamReader(fileStream);
+            var fileContent = reader.ReadToEnd();
+            ValidateGoogleCreds(fileContent);
+        }
+
+        private void GenerateToken_Click(object sender, RoutedEventArgs e)
+        {
+            MaterialMessageBox.Show("This feature is not fully implemented yet. If you have a twitch token you can input it in the token input field. Its not currently being used for anything", "Not implemented");
+        }
+
+        private void DefaultVoiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var defaultVoice = DatabaseManager.Context.UserVoices
+                .FirstOrDefault(userVoice => userVoice.UserId == "_default" && userVoice.Username == "_default");
+            var voiceWindow = new UserVoiceWindow(defaultVoice);
+            var results = voiceWindow.ShowDialog();
+            if (results != true) return;
+            DatabaseManager.Context.SaveChanges();
         }
     }
 }
