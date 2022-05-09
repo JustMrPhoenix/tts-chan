@@ -1,17 +1,31 @@
-﻿using System;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
 namespace TTS_Chan.TTS
 {
     public class TtsEntry
     {
-        public IWaveProvider Provider { get; private set; }
+        private readonly IWaveProvider _originalProvider;
+        private IWaveProvider _volumeAdjusted;
 
         public TtsEntry(IWaveProvider provider)
         {
-            Provider = provider;
-            Provider = provider;
+            _originalProvider = provider;
+        }
+
+        public IWaveProvider UpdateVolume(float volume)
+        {
+            var volumeProvider = new VolumeSampleProvider(_originalProvider.ToSampleProvider())
+            {
+                Volume = volume
+            };
+            _volumeAdjusted = volumeProvider.ToWaveProvider();
+            return _volumeAdjusted;
+        }
+
+        public IWaveProvider GetProvider()
+        {
+            return _volumeAdjusted ?? _originalProvider;
         }
     }
 }

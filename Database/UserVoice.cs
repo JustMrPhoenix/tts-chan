@@ -10,5 +10,6 @@
         public string VoiceName { get; set; }
         public int Rate { get; set; }
         public int Pitch { get; set; }
+        public int Volume { get; set; } = 100;
     }
 }

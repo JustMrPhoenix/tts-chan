@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,12 +21,13 @@ namespace TTS_Chan
     /// </summary>
     public partial class UserVoiceWindow
     {
-        public UserVoice UserVoice;
-        private WaveOut waveOut;
+        // ReSharper disable once MemberCanBePrivate.Global
+        public readonly UserVoice UserVoice;
+        private readonly WaveOut _waveOut;
         private string _previewPrompt = "Hello streamer. This is a preview for user %username%. Using %provider% %voice%";
         public UserVoiceWindow(UserVoice userVoice)
         {
-            waveOut = new WaveOut()
+            _waveOut = new WaveOut()
             {
                 DesiredLatency = 500,
                 NumberOfBuffers = 32
@@ -104,21 +106,23 @@ namespace TTS_Chan
 
         private async Task DoPreview(string textToPreview)
         {
-            if (waveOut.PlaybackState == PlaybackState.Playing)
+            if (_waveOut.PlaybackState == PlaybackState.Playing)
             {
-                waveOut.Stop();
+                _waveOut.Stop();
             }
             textToPreview = textToPreview.Replace("%username%", UserVoice.Username);
             textToPreview = textToPreview.Replace("%provider%", UserVoice.VoiceProvider);
             textToPreview = textToPreview.Replace("%voice%", UserVoice.VoiceName);
             var provider = TtsManager.GetProvider(UserVoice.VoiceProvider);
+            var username = Regex.Replace(UserVoice.Username, @"[^\w_]+", "_");
             var entry = await provider.MakeEntry(new TwitchMessage(new IrcMessageParser(
-                $":{UserVoice.Username}!{UserVoice.Username}@{UserVoice.Username}.tmi.twitch.tv PRIVMSG #{UserVoice.Username} :{textToPreview}"
+                $":{username}!{username}@{username}.tmi.twitch.tv PRIVMSG #{username} :{textToPreview}"
                 )), UserVoice);
-            waveOut.Volume = (float) (Properties.Settings.Default.GlobalVolume / 100);
-            waveOut.Init(entry.Provider);
-            waveOut.Play();
-            while (waveOut.PlaybackState == PlaybackState.Playing)
+            _waveOut.Volume = (float) (Properties.Settings.Default.GlobalVolume / 100);
+            entry.UpdateVolume(UserVoice.Volume / 100f);
+            _waveOut.Init(entry.GetProvider());
+            _waveOut.Play();
+            while (_waveOut.PlaybackState == PlaybackState.Playing)
             {
                 await Task.Delay(100);
             }
@@ -126,9 +130,9 @@ namespace TTS_Chan
 
         private void PreviewButton_Click(object sender, RoutedEventArgs e)
         {
-            if (waveOut.PlaybackState == PlaybackState.Playing)
+            if (_waveOut.PlaybackState == PlaybackState.Playing)
             {
-                waveOut.Stop();
+                _waveOut.Stop();
             }
             else
             {
@@ -142,7 +146,7 @@ namespace TTS_Chan
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            waveOut?.Dispose();
+            _waveOut?.Dispose();
         }
 
     }

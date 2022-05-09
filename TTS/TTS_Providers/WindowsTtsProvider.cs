@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,6 +25,18 @@ namespace TTS_Chan.TTS.TTS_Providers
         public async Task Initialize()
         {
             await Task.Factory.StartNew(PerformTtsImport);
+            /*using (SpeechSynthesizer synth = new SpeechSynthesizer())
+            {
+                foreach (InstalledVoice voice in synth.GetInstalledVoices())
+                {
+                    PromptBuilder pb = new PromptBuilder();
+                    pb.StartVoice(voice.VoiceInfo);
+                    pb.AppendText("hello");
+                    pb.EndVoice();
+                    var xml = pb.ToXml();
+                    Console.WriteLine(xml);
+                }
+            }*/
         }
         
         private static void PerformTtsImport()
@@ -112,14 +125,15 @@ namespace TTS_Chan.TTS.TTS_Providers
             return await Task.Factory.StartNew(() =>
             {
                 // Yoinked from https://stackoverflow.com/a/47956034
-                const SpeechVoiceSpeakFlags speechFlags = SpeechVoiceSpeakFlags.SVSFlagsAsync | SpeechVoiceSpeakFlags.SVSFPersistXML;
+                // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
+                const SpeechVoiceSpeakFlags speechFlags = SpeechVoiceSpeakFlags.SVSFlagsAsync | SpeechVoiceSpeakFlags.SVSFIsXML | SpeechVoiceSpeakFlags.SVSFParseSsml;
+                // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
                 var spVoice = new SpVoice();
                 var wave = new SpMemoryStream();
                 var voices = spVoice.GetVoices();
                 try
                 {
                     spVoice.Volume = 100;
-                    spVoice.Rate = Math.Max(-10, Math.Min(10, voice.Rate / 10));
                     var useVoice = voices.Cast<SpObjectToken>()
                         .FirstOrDefault(voiceToken => voiceToken.GetAttribute("Name") == voice.VoiceName);
                     if (useVoice == null)
@@ -130,8 +144,14 @@ namespace TTS_Chan.TTS.TTS_Providers
                     spVoice.Voice = useVoice;
                     wave.Format.Type = SpeechAudioFormatType.SAFT48kHz16BitMono;
                     spVoice.AudioOutputStream = wave;
+                    var pitch = Math.Clamp(voice.Pitch / 10, -10, 10);
+                    var cultureInfo = new CultureInfo(int.Parse(useVoice.GetAttribute("Language"), NumberStyles.HexNumber));
                     var speakXml =
-                        $"<pitch absmiddle=\"{Math.Clamp(voice.Pitch / 10, -10, 10)}\">{SecurityElement.Escape(message.SpeakableText)}</pitch>";
+                        "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\">" +
+                        $"<voice name=\"{voice.VoiceName}\" xml:lang=\"{cultureInfo.Name}\">" +
+                        $"<prosody rate=\"{Math.Pow(0.0001125 * voice.Rate, 2) + 0.01875 * voice.Rate + 1.000}\" pitch=\"{(pitch >= 0 ? "+" + pitch : pitch )}st\">{SecurityElement.Escape(message.SpeakableText)}</prosody>" +
+                        "</voice>" +
+                        "</speak>";
                     spVoice.Speak(speakXml, speechFlags);
                     spVoice.WaitUntilDone(Timeout.Infinite);
                     

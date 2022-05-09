@@ -1,7 +1,4 @@
 ﻿using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
 using TTS_Chan.TTS;
 
 namespace TTS_Chan.Database
@@ -18,12 +15,12 @@ namespace TTS_Chan.Database
 
         public static void EnsureDefaultVoice()
         {
-            var defaultVoice = Context.UserVoices.FirstOrDefault(userVoice => userVoice.UserId == "_default" && userVoice.Username == "_default");
+            var defaultVoice = Context.UserVoices.FirstOrDefault(userVoice => userVoice.UserId == "_default");
             if (defaultVoice != null) return;
             var defaultProvider = TtsManager.GetProvider(TtsManager.GetProviders().First());
             var userVoice = new UserVoice()
             {
-                Username = "_default",
+                Username = "Default Voice",
                 UserId = "_default",
                 Pitch = 0,
                 Rate = 1,

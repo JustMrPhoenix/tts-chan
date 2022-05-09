@@ -29,7 +29,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <DataGrid x:Name="UsersGrid" Grid.Row="0" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="False" CanUserAddRows="False" SelectionMode="Single">
+                        <DataGrid x:Name="UsersGrid" Grid.Row="0" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="False" CanUserAddRows="False" SelectionMode="Single" PreviewKeyDown="UsersGrid_PreviewKeyDown">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="*" Header="Username"  IsReadOnly="True" Binding="{Binding Username, Mode=OneWay}"/>
                                 <DataGridCheckBoxColumn Width="90" Header="Is Muted" IsReadOnly="True" Binding="{Binding IsMuted, Mode=OneWay}"/>
@@ -79,7 +79,7 @@
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                         EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
-                                                        Width="90"
+                                                        Width="95"
                                                         Header="Is Enabled"
                                                         Binding="{Binding IsEnabled, Mode=TwoWay}"/>
                                 <DataGridTextColumn Width="*"

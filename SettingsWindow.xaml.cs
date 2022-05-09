@@ -2,18 +2,14 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using BespokeFusion;
 using Google.Cloud.TextToSpeech.V1;
-using Microsoft.EntityFrameworkCore;
 using TTS_Chan.Database;
-using TTS_Chan.Properties;
 using TTS_Chan.TTS;
 using TTS_Chan.TTS.TTS_Providers;
 using TTS_Chan.Twitch;
@@ -48,7 +44,6 @@ namespace TTS_Chan
                 // ignored
             }
             ValidateGoogleCreds();
-            var providers = TtsManager.GetProviders();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -67,7 +62,7 @@ namespace TTS_Chan
 
         private void ValidateGoogleCreds(string credentials = null)
         {
-            string usingCredentials = null;
+            string usingCredentials;
             try
             {
                 if (credentials == null)
@@ -141,7 +136,7 @@ namespace TTS_Chan
 
         private void OpenGAuthFile_Click(object sender, RoutedEventArgs e)
         {
-            using OpenFileDialog openFileDialog = new OpenFileDialog();
+            using var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "JSON files (*.json)|*.json";
             openFileDialog.FilterIndex = 2;
             openFileDialog.RestoreDirectory = true;
@@ -161,7 +156,7 @@ namespace TTS_Chan
         private void DefaultVoiceButton_Click(object sender, RoutedEventArgs e)
         {
             var defaultVoice = DatabaseManager.Context.UserVoices
-                .FirstOrDefault(userVoice => userVoice.UserId == "_default" && userVoice.Username == "_default");
+                .FirstOrDefault(userVoice => userVoice.UserId == "_default");
             var voiceWindow = new UserVoiceWindow(defaultVoice);
             var results = voiceWindow.ShowDialog();
             if (results != true) return;

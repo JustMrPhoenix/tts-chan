@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using Microsoft.EntityFrameworkCore;
 using TTS_Chan.Database;
@@ -108,6 +109,17 @@ namespace TTS_Chan
                 UseShellExecute = true
             };
             Process.Start(psi);
+        }
+
+        private void UsersGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // User is attempting to delete the row
+            if (e.Key != Key.Delete) return;
+            var selectedVoice = (UserVoice) UsersGrid.SelectedItem;
+            if (selectedVoice.UserId == "_default")
+            {
+                e.Handled = true;
+            }
         }
     }
 }

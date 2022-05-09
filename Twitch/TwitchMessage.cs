@@ -82,7 +82,7 @@ namespace TTS_Chan.Twitch
                 }
             }
             var substituted = MessageSubstitution.PerformAll(text);
-            var words = substituted.Split(' ');
+            var words = substituted.Split(' ','.',',','!');
             var result = "";
             foreach (var word in words)
             {

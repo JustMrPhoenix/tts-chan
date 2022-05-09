@@ -15,7 +15,7 @@ namespace TTS_Chan
     /// </summary>
     public partial class MainWindow
     {
-        public static MainWindow Instance;
+        public static MainWindow Instance { get; private set; }
         private static readonly int MaxMessages = 50;
         private static readonly SolidColorBrush[] MessageBgColors = {
             (SolidColorBrush)new BrushConverter().ConvertFrom("#242427"),
@@ -182,19 +182,16 @@ namespace TTS_Chan
 
         private void ConnectionButton_Click(object sender, RoutedEventArgs e)
         {
-            switch (_twitchConnector.IrcStatus)
+            _ = _twitchConnector.IrcStatus switch
             {
-                case Twitch.TwitchConnectionStatus.NotConnected:
-                case Twitch.TwitchConnectionStatus.Disconnected:
-                    _ = ConnectTwitch(_twitchConnector.IrcStatus == Twitch.TwitchConnectionStatus.Disconnected);
-                    break;
-                case Twitch.TwitchConnectionStatus.Connected when !Properties.Settings.Default.AutoJoin:
-                    _ = _twitchConnector.JoinChannel(Properties.Settings.Default.ChannelName);
-                    break;
-                default:
-                    _ = _twitchConnector.Disconnect();
-                    break;
-            }
+                Twitch.TwitchConnectionStatus.NotConnected => ConnectTwitch(_twitchConnector.IrcStatus ==
+                                                                            Twitch.TwitchConnectionStatus.Disconnected),
+                Twitch.TwitchConnectionStatus.Disconnected => ConnectTwitch(_twitchConnector.IrcStatus ==
+                                                                            Twitch.TwitchConnectionStatus.Disconnected),
+                Twitch.TwitchConnectionStatus.Connected when !Properties.Settings.Default.AutoJoin => _twitchConnector
+                    .JoinChannel(Properties.Settings.Default.ChannelName),
+                _ => _twitchConnector.Disconnect()
+            };
         }
 
         private void DatabaseButton_Click(object sender, RoutedEventArgs e)

@@ -30,8 +30,8 @@ namespace TTS_Chan.TTS
         {
             if (Queue.Count == 0) return;
             var entry = Queue.Dequeue();
-            _outputDevice.Init(entry.Provider);
-            //_outputDevice.Volume = (float)Properties.Settings.Default.GlobalVolume / 100;
+            _outputDevice.Init(entry.GetProvider());
+            _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100;
             _outputDevice.Play();
         }
 
@@ -71,7 +71,7 @@ namespace TTS_Chan.TTS
             }
 
             userVoice ??= await DatabaseManager.Context.UserVoices
-                .Where(userVoice => userVoice.UserId == "_default" && userVoice.Username == "_default")
+                .Where(uv => uv.UserId == "_default")
                 .FirstOrDefaultAsync(CancellationToken.None);
             if (userVoice.IsMuted)
             {
@@ -79,15 +79,16 @@ namespace TTS_Chan.TTS
             }
             var microsoftProvider = GetProvider(userVoice.VoiceProvider);
             var entry = await microsoftProvider.MakeEntry(message, userVoice);
+            entry.UpdateVolume(userVoice.Volume / 100f);
             AddToQueue(entry);
         }
 
-        public static void AddToQueue(TtsEntry entry)
+        private static void AddToQueue(TtsEntry entry)
         {
             if (_outputDevice.PlaybackState == PlaybackState.Stopped)
             {
-                _outputDevice.Init(entry.Provider);
-                _outputDevice.Volume = (float)Properties.Settings.Default.GlobalVolume / 100;
+                _outputDevice.Init(entry.GetProvider());
+                _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100;
                 _outputDevice.Play();
             }
             else

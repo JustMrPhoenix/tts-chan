@@ -36,6 +36,8 @@
             <Slider Minimum="-100" Maximum="100" Value="{Binding Rate, Mode=TwoWay}" />
             <TextBlock Text="{Binding Pitch, StringFormat=Pitch: {0}}"/>
             <Slider Minimum="-100" Maximum="100" Value="{Binding Pitch, Mode=TwoWay}" />
+            <TextBlock Text="{Binding Volume, StringFormat=Volume: {0}}"/>
+            <Slider Minimum="0" Maximum="100" Value="{Binding Volume, Mode=TwoWay}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="16,16,10,16" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button x:Name="PreviewButton" Content="Preview" Margin="0,0,4,0" Click="PreviewButton_Click"/>
