@@ -1,0 +1,61 @@
+﻿<Window x:Class="TTS_Chan.SpeechChatImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:TTS_Chan.Properties"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        ResizeMode="NoResize"
+        Title="Speechchat import" Height="400" Width="300" Icon="/Resources/vrossaTTS.png">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <TextBlock TextWrapping="Wrap">
+                Follow these steps to import user voices from speechchat.com.
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Margin="0,4,0,4">
+                Step 1: Open <Hyperlink NavigateUri="https://www.speechchat.com/" RequestNavigate="Hyperlink_OnRequestNavigate">Speechchat</Hyperlink>
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Margin="0,4,0,4">
+                Step 2: Open <Hyperlink NavigateUri="https://developer.chrome.com/docs/devtools/open/" RequestNavigate="Hyperlink_OnRequestNavigate">chrome developer console</Hyperlink> in your browser
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Margin="0,4,0,4">
+                Step 3: Paste the following javascript code in the DevTools console and press enter to run it
+            </TextBlock>
+            <TextBox
+                TextWrapping="NoWrap"
+                VerticalScrollBarVisibility="Auto"
+                IsReadOnly="True"
+                Height="150"
+                Text="var blob = new Blob([JSON.stringify(config.user_groups.find(e =&gt; e.name == &quot;Whitelist&quot;).name_list.twitch.adv_options,null,4)], { type: &quot;text/json&quot; });
+&#x0a;const link = document.createElement(&quot;a&quot;);
+&#x0a;link.download = `speechchat-twitch-export-${new Date().getTime()}.json`;
+&#x0a;link.href = window.URL.createObjectURL(blob);
+&#x0a;link.dataset.downloadurl = [&quot;text/json&quot;, link.download, link.href].join(&quot;:&quot;);
+&#x0a;const evt = new MouseEvent(&quot;click&quot;, {
+&#x0a;    view: window,
+&#x0a;    bubbles: true,
+&#x0a;    cancelable: true,
+&#x0a;});
+&#x0a;link.dispatchEvent(evt);
+&#x0a;link.remove();"/>
+
+        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Margin="0,4,0,4">
+            Step 4: Press the button bellow and open the file downloaded during step 3
+        </TextBlock>
+        <Button x:Name="ImportFileButton" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Load speechchat users" IsEnabled="True" Click="ImportFileButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Import"/>
+                <materialDesign:PackIcon Kind="FileDownload" Margin="4,0,0,0" />
+            </StackPanel>
+        </Button>
+        </StackPanel>
+    </Grid>
+</Window>

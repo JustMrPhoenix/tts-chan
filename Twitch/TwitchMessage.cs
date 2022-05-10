@@ -66,6 +66,34 @@ namespace TTS_Chan.Twitch
             }
         }
 
+        public TwitchMessage(string text, string username, Dictionary<string, string> tags)
+        {
+            Text = text;
+            SpeakableText = Text;
+            Tags = tags;
+            Username = username;
+            DisplayName = Tags.ContainsKey("display-name") ? Tags["display-name"] : Username;
+            Userid = Tags.ContainsKey("user-id") ? Tags["user-id"] : "UNKNOWN";
+            if (Tags.ContainsKey("color") && Tags["color"] != "")
+            {
+                Color = Tags["color"];
+            }
+            else
+            {
+                if (UserColors.ContainsKey(Userid))
+                {
+                    Color = UserColors[Userid];
+                }
+                else
+                {
+                    Random random = new();
+                    var randColor = random.Next(0, NameColors.Length);
+                    Color = NameColors[randColor];
+                    UserColors[Userid] = Color;
+                }
+            }
+        }
+
         public void ApplyFilters()
         {
             var text = Text;

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using BespokeFusion;
 using NAudio.Wave;
 using TTS_Chan.Database;
+using TTS_Chan.Properties;
 using TTS_Chan.TTS;
 using TTS_Chan.Twitch;
 using Application = System.Windows.Application;
@@ -32,12 +33,13 @@ namespace TTS_Chan
                 DesiredLatency = 500,
                 NumberOfBuffers = 32
             };
+            _waveOut.Volume = (float)(Settings.Default.GlobalVolume / 100f);
             UserVoice = userVoice;
             DataContext = UserVoice;
             InitializeComponent();
             var providers = TtsManager.GetProviders();
             ProviderComboBox.ItemsSource = providers;
-            ProviderComboBox.SelectedItem = providers[0];
+            ProviderComboBox.SelectedItem = string.IsNullOrEmpty(UserVoice.VoiceProvider) ? providers[0] : UserVoice.VoiceProvider;
             UsernameComboBox.ItemsSource = TwitchConnector.KnownUsernames;
             if (UserVoice.UserId != null)
             {
@@ -56,6 +58,10 @@ namespace TTS_Chan
             if (!voices.Contains(UserVoice.VoiceName) && voices.Count != 0)
             {
                 VoiceNameComboBox.SelectedItem = voices[0];
+            }
+            else if (!string.IsNullOrEmpty(UserVoice.VoiceName))
+            {
+                VoiceNameComboBox.SelectedItem = UserVoice.VoiceName;
             }
         }
 
@@ -114,13 +120,10 @@ namespace TTS_Chan
             textToPreview = textToPreview.Replace("%provider%", UserVoice.VoiceProvider);
             textToPreview = textToPreview.Replace("%voice%", UserVoice.VoiceName);
             var provider = TtsManager.GetProvider(UserVoice.VoiceProvider);
-            var username = Regex.Replace(UserVoice.Username, @"[^\w_]+", "_");
-            var entry = await provider.MakeEntry(new TwitchMessage(new IrcMessageParser(
-                $":{username}!{username}@{username}.tmi.twitch.tv PRIVMSG #{username} :{textToPreview}"
-                )), UserVoice);
-            _waveOut.Volume = (float) (Properties.Settings.Default.GlobalVolume / 100);
+            var entry = await provider.MakeEntry(new TwitchMessage(textToPreview, UserVoice.Username, new Dictionary<string, string>()), UserVoice);
             entry.UpdateVolume(UserVoice.Volume / 100f);
             _waveOut.Init(entry.GetProvider());
+            _waveOut.Volume = (float) (Settings.Default.GlobalVolume / 100f);
             _waveOut.Play();
             while (_waveOut.PlaybackState == PlaybackState.Playing)
             {

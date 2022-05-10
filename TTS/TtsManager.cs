@@ -31,7 +31,7 @@ namespace TTS_Chan.TTS
             if (Queue.Count == 0) return;
             var entry = Queue.Dequeue();
             _outputDevice.Init(entry.GetProvider());
-            _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100;
+            _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100f;
             _outputDevice.Play();
         }
 
@@ -88,7 +88,7 @@ namespace TTS_Chan.TTS
             if (_outputDevice.PlaybackState == PlaybackState.Stopped)
             {
                 _outputDevice.Init(entry.GetProvider());
-                _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100;
+                _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100f;
                 _outputDevice.Play();
             }
             else

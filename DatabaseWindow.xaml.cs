@@ -121,5 +121,13 @@ namespace TTS_Chan
                 e.Handled = true;
             }
         }
+
+        private void SpeechchatImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var importWindow = new SpeechChatImportWindow();
+            importWindow.ShowDialog();
+            DatabaseManager.Context.UserVoices.Load();
+            UsersGrid.DataContext = DatabaseManager.Context.UserVoices.Local.ToObservableCollection();
+        }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "TTS-Chan": {
       "commandName": "Project",
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }

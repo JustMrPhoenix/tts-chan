@@ -53,6 +53,13 @@
                                 HorizontalAlignment="Right"
                                 Margin="4 4 4 4"
                                 Content="{materialDesign:PackIcon Kind=Plus, Size=22}" Click="AddButton_Click" />
+                            <Button x:Name="SpeechchatImportButton"
+                                Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right"
+                                ToolTip="Import from speechchat"
+                                Margin="4 4 4 4"
+                                Content="{materialDesign:PackIcon Kind=DatabaseImport, Size=22}" Click="SpeechchatImportButton_Click"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>
@@ -69,7 +76,7 @@
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Vertical">
-                            <TextBox IsReadOnly="True" Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value. Press delete while having a cell selected to remove it.&#x0a;Results save automatically after you close the window"/>
+                            <TextBlock Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value. Press delete while having a cell selected to remove it.&#x0a;Results save automatically after you close the window"/>
                             <TextBlock Margin="4,0,4,0">
                                 <Hyperlink NavigateUri="https://regex101.com/r/RHiPsL/1" RequestNavigate="Hyperlink_OnRequestNavigate">Interactive tool</Hyperlink>
                             </TextBlock>

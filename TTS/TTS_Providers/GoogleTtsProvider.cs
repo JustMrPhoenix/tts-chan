@@ -16,13 +16,13 @@ namespace TTS_Chan.TTS.TTS_Providers
         public const string CredentialsPath = "./google-credentials.json";
         private TextToSpeechClient _client;
         private readonly List<string> _voices = new();
-        private readonly Dictionary<string, Voice> _voicesNamed = new();
+        public readonly Dictionary<string, Voice> VoicesNamed = new();
         public async Task Initialize()
         {
             if (_client != null)
             {
                 _voices.Clear();
-                _voicesNamed.Clear();
+                VoicesNamed.Clear();
             }
             if (!File.Exists(CredentialsPath))
             {
@@ -41,7 +41,7 @@ namespace TTS_Chan.TTS.TTS_Providers
             {
                 var name = $"{voice.LanguageCodes[0].ToUpper()} : {Regex.Match(voice.Name, @"\w+-\w+-(.*)").Groups[1].Value} # {voice.SsmlGender}";
                 _voices.Add(name);
-                _voicesNamed[name] = voice;
+                VoicesNamed[name] = voice;
             }
             _voices.Sort();
         }
@@ -58,7 +58,7 @@ namespace TTS_Chan.TTS.TTS_Providers
 
         public async Task<TtsEntry> MakeEntry(TwitchMessage message, UserVoice voice)
         {
-            var voiceInfo = _voicesNamed[voice.VoiceName];
+            var voiceInfo = VoicesNamed[voice.VoiceName];
             var rate = Math.Pow(0.0001125 * voice.Rate, 2) + 0.01875 * voice.Rate + 1.000;
             var speechResults = await _client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest
             {

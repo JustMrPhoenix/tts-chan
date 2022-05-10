@@ -25,18 +25,6 @@ namespace TTS_Chan.TTS.TTS_Providers
         public async Task Initialize()
         {
             await Task.Factory.StartNew(PerformTtsImport);
-            /*using (SpeechSynthesizer synth = new SpeechSynthesizer())
-            {
-                foreach (InstalledVoice voice in synth.GetInstalledVoices())
-                {
-                    PromptBuilder pb = new PromptBuilder();
-                    pb.StartVoice(voice.VoiceInfo);
-                    pb.AppendText("hello");
-                    pb.EndVoice();
-                    var xml = pb.ToXml();
-                    Console.WriteLine(xml);
-                }
-            }*/
         }
         
         private static void PerformTtsImport()
@@ -114,6 +102,7 @@ namespace TTS_Chan.TTS.TTS_Providers
         {
             var synth = new SpVoice();
             var voices = synth.GetVoices();
+            var sas = ((SpObjectToken) voices.Item(0));
             var voicesList = voices.Cast<SpObjectToken>().Select(voiceToken => voiceToken.GetAttribute("Name")).ToList();
             Marshal.ReleaseComObject(voices);
             Marshal.ReleaseComObject(synth);
