@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TTS_Chan.Components;
+using TTS_Chan.Properties;
 using TTS_Chan.TTS;
+using TTS_Chan.Utils;
 
 namespace TTS_Chan
 {
@@ -24,6 +26,8 @@ namespace TTS_Chan
         private int _messageCount;
         private readonly Twitch.TwitchConnector _twitchConnector;
         private readonly ObservableCollection<string> _eventLog = new();
+        private int SkipHotkey = -1;
+        private int ClearQueueHotkey = -1;
 
         public MainWindow()
         {
@@ -36,6 +40,27 @@ namespace TTS_Chan
                 Dispatcher.Invoke(() => { OnIRCStatusChanged(status, message); });
             };
             _ = StartupTask();
+        }
+
+        public void LoadHotkeys()
+        {
+            if (SkipHotkey != -1)
+            {
+                GlobalHotKey.UnregisterHotKey(SkipHotkey);
+            }
+
+            if (ClearQueueHotkey != -1)
+            {
+                GlobalHotKey.UnregisterHotKey(ClearQueueHotkey);
+            }
+            if (Settings.Default.HotkeySkipCurrent != "")
+            {
+                SkipHotkey = GlobalHotKey.RegisterHotKey(Settings.Default.HotkeySkipCurrent, TtsManager.SkipCurrent);
+            }
+            if (Settings.Default.HotkeyClearQueue != "")
+            {
+                ClearQueueHotkey = GlobalHotKey.RegisterHotKey(Settings.Default.HotkeyClearQueue, TtsManager.ClearQueue);
+            }
         }
 
         private async Task StartupTask()
@@ -198,6 +223,16 @@ namespace TTS_Chan
         {
             DatabaseWindow dbWindow = new();
             dbWindow.ShowDialog();
+        }
+
+        private void StopCurrentButton_Click(object sender, RoutedEventArgs e)
+        {
+            TtsManager.SkipCurrent();
+        }
+
+        private void ClearQueueButton_Click(object sender, RoutedEventArgs e)
+        {
+            TtsManager.ClearQueue();
         }
     }
 }

@@ -221,16 +221,21 @@ namespace TTS_Chan.Twitch
 
                 case IrcCommands.RPL_ENDOFMOTD:
                     ChangeConnectionStatus(TwitchConnectionStatus.Connected, "Auth successful as " + message.Parameters[0]);
+
+                    #region DebugMessages
+
 #if DEBUG
                     //await HandleIrcMessage(new IrcMessageParser(
                     //    "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse semper semper ante. Nunc id elit fermentum, tincidunt quam vitae, congue massa. Aliquam eget felis non turpis bibendum iaculis. Mauris vitae iaculis ex, fringilla efficitur felis. Aenean non diam in libero varius commodo. Proin tincidunt porttitor magna in lobortis. Nam lobortis massa quis tellus consectetur, tempor maximus dui commodo. Donec ut nisl egestas, ultricies magna quis, egestas ante. Maecenas tempor ut eros ut semper. Fusce tempus, quam non vestibulum sagittis, nunc arcu tincidunt dui, eu aliquam tellus nunc vitae dolor. Sed gravida, lacus et malesuada bibendum, justo eros commodo elit, a dignissim neque felis nec augue. In viverra ultrices libero, et tincidunt quam pretium eu. Aliquam quam neque, tristique vitae tristique sit amet, pellentesque sed lorem. Maecenas sagittis eu ex sed porttitor. Suspendisse blandit scelerisque mauris ut accumsan."));
                     //await HandleIrcMessage(new IrcMessageParser(
                     //    "@badge-info=;badges=;client-nonce=67ec4d63b4996a9d33da8badacf17601;color=#FF69B4;display-name=素人若い女の子;emotes=;first-msg=0;flags=;id=6fe09cf6-1ec5-47b1-929d-f135e21aa2da;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650223131088;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :good thing my internet is stable enough for ossa strim vrossaComfy"));
-                    await HandleIrcMessage(new IrcMessageParser(
-                        "@badge-info=;badges=;client-nonce=4eec2ae146fd7bc6305270740ce6351f;color=#FF69B4;display-name=素人若い女の子;emotes=emotesv2_3361c7d006e949efbea398cfc73fea8b:3-12/emotesv2_07e98ddf13e74ab1b667b84de344b99a:14-20/emotesv2_e7dd977d9f494d5999570c9ff5ce7e9e:22-31;first-msg=0;flags=;id=257a8049-7bf2-48e5-b50f-ecceb3418a5e;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650912362469;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :hi vrossaChad vrossaL vrossaRoll hello"));
-                    await HandleIrcMessage(new IrcMessageParser(
-                        "@badge-info=;badges=;client-nonce=02b8f27dbc443e8f02d13afed30f0742;color=#FF69B4;display-name=素人若い女の子;emotes=301003454:8-14/emotesv2_b0c31cd7b0c54b60a53bd2a2e0178b86:19-28/emotesv2_9ad639b55bec4079a6e0228c2171f554:35-46/302490862:53-61;first-msg=0;flags=;id=3f2e6cb3-f293-48df-b1ce-b0de46c7e944;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650913101407;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :imagine vrossaW if vrossaWalk this vrossaWiggle will vrossaSip works Stare"));
+                    //await HandleIrcMessage(new IrcMessageParser(
+                    //    "@badge-info=;badges=;client-nonce=4eec2ae146fd7bc6305270740ce6351f;color=#FF69B4;display-name=素人若い女の子;emotes=emotesv2_3361c7d006e949efbea398cfc73fea8b:3-12/emotesv2_07e98ddf13e74ab1b667b84de344b99a:14-20/emotesv2_e7dd977d9f494d5999570c9ff5ce7e9e:22-31;first-msg=0;flags=;id=257a8049-7bf2-48e5-b50f-ecceb3418a5e;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650912362469;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :hi vrossaChad vrossaL vrossaRoll hello"));
+                    //await HandleIrcMessage(new IrcMessageParser(
+                    //    "@badge-info=;badges=;client-nonce=02b8f27dbc443e8f02d13afed30f0742;color=#FF69B4;display-name=素人若い女の子;emotes=301003454:8-14/emotesv2_b0c31cd7b0c54b60a53bd2a2e0178b86:19-28/emotesv2_9ad639b55bec4079a6e0228c2171f554:35-46/302490862:53-61;first-msg=0;flags=;id=3f2e6cb3-f293-48df-b1ce-b0de46c7e944;mod=0;room-id=728884633;subscriber=0;tmi-sent-ts=1650913101407;turbo=0;user-id=51857679;user-type= :justmrphoenix!justmrphoenix@justmrphoenix.tmi.twitch.tv PRIVMSG #pex_is_cute :imagine vrossaW if vrossaWalk this vrossaWiggle will vrossaSip works Stare"));
 #endif
+
+                    #endregion
                     break;
 
                 case IrcCommands.JOIN:
@@ -253,8 +258,9 @@ namespace TTS_Chan.Twitch
             }
 
             if (msg.SpeakableText == "") return;
-            _mainWindow.Dispatcher.Invoke(() => { _mainWindow.AddMessage(msg); });
             await TtsManager.ProcessMessage(msg);
+            if (msg.SpeakableText == "") return;
+            _mainWindow.Dispatcher.Invoke(() => { _mainWindow.AddMessage(msg); });
         }
 
         private void ChangeConnectionStatus(TwitchConnectionStatus status, string message = null)

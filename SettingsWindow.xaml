@@ -14,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
-        Title="Settings" Height="600" Width="320" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
+        Title="Settings" Height="650" Width="320" Icon="/Resources/vrossaTTS.png" Closed="Window_Closed">
     <Grid>
         <materialDesign:DialogHost x:Name="DialogHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsOpen="False">
             <materialDesign:DialogHost.DialogContent>
@@ -48,6 +48,9 @@
             <Slider x:Name="MessageLengthSlider" IsSnapToTickEnabled="True" TickFrequency="10" Minimum="0" Maximum="500" Value="{Binding Source={x:Static properties:Settings.Default}, Path=MessageSymbolLimit}"/>
             <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat=Volume: {0}}"/>
             <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="{Binding Source={x:Static properties:Settings.Default}, Path=GlobalVolume}"/>
+            <Separator Margin="3,10,3,10"/>
+            <TextBox x:Name="SkipCurrentHotkeyBox"  materialDesign:HintAssist.Hint="Skip current entry hotkey" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="0,2,0,2" Text="{Binding Source={x:Static properties:Settings.Default}, Path=HotkeySkipCurrent}" PreviewKeyDown="HotkeyBox_KeyDown"/>
+            <TextBox x:Name="ClearQueueHotkeyBox"  materialDesign:HintAssist.Hint="Clear queue hotkey" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="0,2,0,2" Text="{Binding Source={x:Static properties:Settings.Default}, Path=HotkeyClearQueue}" PreviewKeyDown="HotkeyBox_KeyDown"/>
             <Separator Margin="3,10,3,10"/>
             <Button x:Name="DefaultVoiceButton" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="ChangeDefaultVoiceParameters" IsEnabled="True" Click="DefaultVoiceButton_Click">
                 <StackPanel Orientation="Horizontal">

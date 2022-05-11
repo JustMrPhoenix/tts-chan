@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using BespokeFusion;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
 using TTS_Chan.Database;
 using TTS_Chan.TTS;
 using TTS_Chan.TTS.TTS_Providers;
@@ -92,7 +90,7 @@ namespace TTS_Chan
         {
             var missingVoices = new Dictionary<string, string>();
             var dict = JsonConvert.DeserializeObject<Dictionary<string, SpeechchatUserInfo>>(usersJson);
-            foreach (var speechchatUserInfo in dict)
+            foreach (var speechchatUserInfo in dict!)
             {
                 var entry = DatabaseManager.Context.UserVoices
                     .FirstOrDefault(uv => uv.Username == speechchatUserInfo.Key);

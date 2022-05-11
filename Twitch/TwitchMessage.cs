@@ -41,6 +41,10 @@ namespace TTS_Chan.Twitch
                 throw new Exception("Invalid message type");
             }
             Text = parser.Parameters[^1];
+            if (Text.StartsWith("\u0001ACTION"))
+            {
+                Text = Text.Substring(7, Text.Length - 8);
+            }
             SpeakableText = Text;
             Tags = parser.Tags;
             Username = parser.Source.Username;

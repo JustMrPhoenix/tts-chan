@@ -102,7 +102,6 @@ namespace TTS_Chan.TTS.TTS_Providers
         {
             var synth = new SpVoice();
             var voices = synth.GetVoices();
-            var sas = ((SpObjectToken) voices.Item(0));
             var voicesList = voices.Cast<SpObjectToken>().Select(voiceToken => voiceToken.GetAttribute("Name")).ToList();
             Marshal.ReleaseComObject(voices);
             Marshal.ReleaseComObject(synth);

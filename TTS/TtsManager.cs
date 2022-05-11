@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using NAudio.Wave;
 using TTS_Chan.Database;
 using TTS_Chan.Properties;
 using TTS_Chan.Twitch;
+using TTS_Chan.Utils;
 
 namespace TTS_Chan.TTS
 {
@@ -30,11 +32,46 @@ namespace TTS_Chan.TTS
         {
             if (Queue.Count == 0) return;
             var entry = Queue.Dequeue();
-            _outputDevice.Init(entry.GetProvider());
-            _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100f;
-            _outputDevice.Play();
+            PlayEntry(entry);
         }
 
+        private static void PlayEntry(TtsEntry entry)
+        {
+            try
+            {
+                _outputDevice.Init(entry.GetProvider());
+                _outputDevice.Volume = (float) Settings.Default.GlobalVolume / 100f;
+                _outputDevice.Play();
+            }
+            catch
+            {
+                try
+                {
+                    _outputDevice.Dispose();
+                }
+                catch
+                {
+                    // ignored
+                }
+                _outputDevice = new WaveOutEvent()
+                {
+                    DesiredLatency = 500,
+                    NumberOfBuffers = 32
+                };
+                _outputDevice.PlaybackStopped += OnPlaybackStopped;
+                try
+                {
+                    _outputDevice.Init(entry.GetProvider());
+                    _outputDevice.Volume = (float) Settings.Default.GlobalVolume / 100f;
+                    _outputDevice.Play();
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            
+        }
 
         public static void AddProvider(ITtsProvider provider)
         {
@@ -75,21 +112,43 @@ namespace TTS_Chan.TTS
                 .FirstOrDefaultAsync(CancellationToken.None);
             if (userVoice.IsMuted)
             {
+                message.SpeakableText = "";
                 return;
             }
-            var microsoftProvider = GetProvider(userVoice.VoiceProvider);
-            var entry = await microsoftProvider.MakeEntry(message, userVoice);
-            entry.UpdateVolume(userVoice.Volume / 100f);
-            AddToQueue(entry);
+            var provider = GetProvider(userVoice.VoiceProvider);
+            try
+            {
+                var entry = await Retry.DoAsync(async () =>
+                {
+                    var entry = await provider.MakeEntry(message, userVoice);
+                    entry.UpdateVolume(userVoice.Volume / 100f);
+                    return entry;
+                }, new TimeSpan(1), 3);
+                AddToQueue(entry);
+            }
+            catch
+            {
+                MainWindow.Instance.AddLog($"Skipping message from {message.Username}. Failed after 3 attempts");
+                // ignored
+            }
+        }
+
+        public static void SkipCurrent()
+        {
+            _outputDevice.Stop();
+        }
+
+        public static void ClearQueue()
+        {
+            Queue.Clear();
+            _outputDevice.Stop();
         }
 
         private static void AddToQueue(TtsEntry entry)
         {
             if (_outputDevice.PlaybackState == PlaybackState.Stopped)
             {
-                _outputDevice.Init(entry.GetProvider());
-                _outputDevice.Volume = (float)Settings.Default.GlobalVolume / 100f;
-                _outputDevice.Play();
+                PlayEntry(entry);
             }
             else
             {

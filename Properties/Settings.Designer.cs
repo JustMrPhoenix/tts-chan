@@ -106,5 +106,29 @@ namespace TTS_Chan.Properties {
                 this["DisableTwitchEmotes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control + Shift + S")]
+        public string HotkeySkipCurrent {
+            get {
+                return ((string)(this["HotkeySkipCurrent"]));
+            }
+            set {
+                this["HotkeySkipCurrent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control + Shift + C")]
+        public string HotkeyClearQueue {
+            get {
+                return ((string)(this["HotkeyClearQueue"]));
+            }
+            set {
+                this["HotkeyClearQueue"] = value;
+            }
+        }
     }
 }

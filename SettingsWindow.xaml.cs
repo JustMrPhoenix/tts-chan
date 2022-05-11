@@ -48,6 +48,7 @@ namespace TTS_Chan
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            MainWindow.Instance.LoadHotkeys();
             Properties.Settings.Default.Save();
         }
 
@@ -161,6 +162,30 @@ namespace TTS_Chan
             var results = voiceWindow.ShowDialog();
             if (results != true) return;
             DatabaseManager.Context.SaveChanges();
+        }
+
+        private void HotkeyBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            var origin = (System.Windows.Controls.TextBox)sender;
+
+            if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
+            {
+                origin.Text = "";
+                return;
+            }
+
+            var modifiers = Enum.GetValues(Keyboard.Modifiers.GetType()).Cast<Enum>()
+                .Where(Keyboard.Modifiers.HasFlag).Select(e => e.ToString()).Where(s => s != "None")
+                .ToList();
+
+            if (modifiers.Count == 0)
+            {
+                return;
+            }
+            var text = $"{string.Join(" + ", modifiers)} + {e.Key}";
+            origin.Text = text;
+            e.Handled = true;
         }
     }
 }

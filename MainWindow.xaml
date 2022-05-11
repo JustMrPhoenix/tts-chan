@@ -50,6 +50,24 @@
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,0,4,8">
             <Button
+                x:Name="ClearQueueButton"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="Clear queue"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="4,0,4,0" Click="ClearQueueButton_Click">
+                <materialDesign:PackIcon Kind="Clear"/>
+            </Button>
+            <Button
+                x:Name="StopCurrentButton"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="Stop current entry"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="4,0,4,0" Click="StopCurrentButton_Click">
+                <materialDesign:PackIcon Kind="Stop"/>
+            </Button>
+            <Button
                 x:Name="DatabaseButton"
                 Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="Manage users/voices"

@@ -23,5 +23,11 @@
     <Setting Name="DisableTwitchEmotes" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="HotkeySkipCurrent" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control + Shift + S</Value>
+    </Setting>
+    <Setting Name="HotkeyClearQueue" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control + Shift + C</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
