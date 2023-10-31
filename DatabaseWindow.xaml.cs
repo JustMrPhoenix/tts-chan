@@ -91,7 +91,7 @@ namespace TTS_Chan
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            foreach (var ms in DatabaseManager.Context.MessageSubstitutions.Where(ms => ms.Pattern == ""))
+            foreach (var ms in DatabaseManager.Context.MessageSubstitutions.Local.Where(ms => ms.Pattern == null))
             {
                 DatabaseManager.Context.MessageSubstitutions.Remove(ms);
             }
