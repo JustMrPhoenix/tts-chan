@@ -129,5 +129,17 @@ namespace TTS_Chan
             DatabaseManager.Context.UserVoices.Load();
             UsersGrid.DataContext = DatabaseManager.Context.UserVoices.Local.ToObservableCollection();
         }
+
+        private void SubtitutionHelpInfo_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled= true;
+            if (SubtitutionHelpText.Visibility == Visibility.Collapsed)
+            {
+                SubtitutionHelpText.Visibility = Visibility.Visible;
+            }
+            else {
+                SubtitutionHelpText.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
