@@ -132,7 +132,6 @@ namespace TTS_Chan
 
         private void SubtitutionHelpInfo_Click(object sender, RoutedEventArgs e)
         {
-            e.Handled= true;
             if (SubtitutionHelpText.Visibility == Visibility.Collapsed)
             {
                 SubtitutionHelpText.Visibility = Visibility.Visible;

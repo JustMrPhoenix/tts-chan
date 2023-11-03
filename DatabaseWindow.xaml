@@ -75,7 +75,7 @@
                             <RowDefinition Height="Auto"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Vertical" Grid.ColumnSpan="2">
                             <StackPanel Orientation="Vertical" Visibility="Collapsed" x:Name="SubtitutionHelpText">
                                 <TextBlock Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value. Press delete while having a cell selected to remove it.&#x0a;Results save automatically after you close the window"/>
                                 <TextBlock Margin="4,0,4,0">
@@ -83,25 +83,17 @@
                                 </TextBlock>
                             </StackPanel>
                             <Grid>
-                                <Button x:Name="PopulateButton" Padding="0" HorizontalAlignment="Left" Click="PopulateButton_Click" Height="40">
-                                    <Grid Height="40">
-                                        <TextBlock Text="Populate with useful values"
-                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                   Padding="5,0,5,0"/>
-                                        <ToggleButton x:Name="HelpButton"
-                                                    Width="12" Height="12"
-                                                    Margin="0,1,1,0"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                                    ToolTip="Import from speechchat"
-                                                    Content="{materialDesign:PackIcon Kind=Help, Size=8}" 
-                                                    Click="SubtitutionHelpInfo_Click"/>
-                                    </Grid>
-                                </Button>
+                                <Button x:Name="PopulateButton" Padding="5,0,5,0" Content="Populate with useful values" HorizontalAlignment="Left" Click="PopulateButton_Click" Height="40"/>
+                                <ToggleButton x:Name="HelpButton"
+                                                        HorizontalAlignment="Right"
+                                                        Margin="0,0,21,0"
+                                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                                        ToolTip="Import from speechchat"
+                                                        Content="{materialDesign:PackIcon Kind=Help, Size=30}" 
+                                                        Click="SubtitutionHelpInfo_Click" Background="#FF575B4C" BorderBrush="#FF757574" Foreground="White"/>
                             </Grid>
                         </StackPanel>
-                        <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True">
+                        <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True" Grid.ColumnSpan="2">
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                         EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
