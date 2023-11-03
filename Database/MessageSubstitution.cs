@@ -14,7 +14,7 @@ namespace TTS_Chan.Database
 
         public static string PerformAll(string source)
         {
-            var substitutions = DatabaseManager.Context.MessageSubstitutions.Where(ms => ms.IsEnabled && ms.Pattern != "").ToList();
+            var substitutions = DatabaseManager.Context.MessageSubstitutions.Where(ms => ms.IsEnabled && ms.Pattern != null).ToList();
             foreach (var messageSubstitution in substitutions.TakeWhile(_ => source.Length != 0))
             {
                 source = messageSubstitution.IsRegex ? Regex.Replace(source, messageSubstitution.Pattern, messageSubstitution.Replacement) : source.Replace(messageSubstitution.Pattern, messageSubstitution.Replacement);
