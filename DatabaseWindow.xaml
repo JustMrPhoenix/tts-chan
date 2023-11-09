@@ -26,8 +26,8 @@
                     </TabItem.Header>
                     <Grid>
                         <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <DataGrid x:Name="UsersGrid" Grid.Row="0" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="False" CanUserAddRows="False" SelectionMode="Single" PreviewKeyDown="UsersGrid_PreviewKeyDown">
                             <DataGrid.Columns>
@@ -75,14 +75,25 @@
                             <RowDefinition Height="Auto"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value. Press delete while having a cell selected to remove it.&#x0a;Results save automatically after you close the window"/>
-                            <TextBlock Margin="4,0,4,0">
+                        <StackPanel Orientation="Vertical" Grid.ColumnSpan="2">
+                            <StackPanel Orientation="Vertical" Visibility="Collapsed" x:Name="SubtitutionHelpText">
+                                <TextBlock Text="The grid bellow represents rule based replacements for text in messages.&#x0a;You can define rules using Regular Expressions (consult interactive tool bellow)&#x0a;Click on an empty cell to a a new value. Press delete while having a cell selected to remove it.&#x0a;Results save automatically after you close the window"/>
+                                <TextBlock Margin="4,0,4,0">
                                 <Hyperlink NavigateUri="https://regex101.com/r/RHiPsL/1" RequestNavigate="Hyperlink_OnRequestNavigate">Interactive tool</Hyperlink>
-                            </TextBlock>
-                            <Button x:Name="PopulateButton" Width="auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Populate with useful values" Margin="0,6,0,4" Click="PopulateButton_Click"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <Grid>
+                                <Button x:Name="PopulateButton" Padding="5,0,5,0" Content="Populate with useful values" HorizontalAlignment="Left" Click="PopulateButton_Click" Height="40"/>
+                                <ToggleButton x:Name="HelpButton"
+                                                        HorizontalAlignment="Right"
+                                                        Margin="0,0,21,0"
+                                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                                        ToolTip="Import from speechchat"
+                                                        Content="{materialDesign:PackIcon Kind=Help, Size=30}" 
+                                                        Click="SubtitutionHelpInfo_Click" Background="#FF575B4C" BorderBrush="#FF757574" Foreground="White"/>
+                            </Grid>
                         </StackPanel>
-                        <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True">
+                        <DataGrid x:Name="SubstitutionsGrid" Grid.Row="1" ItemsSource="{Binding}" AutoGenerateColumns="False" EnableRowVirtualization="True" Grid.ColumnSpan="2">
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                                                         EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"

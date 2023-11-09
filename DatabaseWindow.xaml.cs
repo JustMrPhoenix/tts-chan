@@ -91,7 +91,7 @@ namespace TTS_Chan
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            foreach (var ms in DatabaseManager.Context.MessageSubstitutions.Where(ms => ms.Pattern == ""))
+            foreach (var ms in DatabaseManager.Context.MessageSubstitutions.Local.Where(ms => ms.Pattern == null))
             {
                 DatabaseManager.Context.MessageSubstitutions.Remove(ms);
             }
@@ -128,6 +128,17 @@ namespace TTS_Chan
             importWindow.ShowDialog();
             DatabaseManager.Context.UserVoices.Load();
             UsersGrid.DataContext = DatabaseManager.Context.UserVoices.Local.ToObservableCollection();
+        }
+
+        private void SubtitutionHelpInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (SubtitutionHelpText.Visibility == Visibility.Collapsed)
+            {
+                SubtitutionHelpText.Visibility = Visibility.Visible;
+            }
+            else {
+                SubtitutionHelpText.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
