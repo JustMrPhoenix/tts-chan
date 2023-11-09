@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TTS_Chan.Database;
 
@@ -103,9 +104,10 @@ namespace TTS_Chan.Twitch
             var text = Text;
             if (Properties.Settings.Default.DisableTwitchEmotes && Tags.ContainsKey("emotes") && Tags["emotes"] != "")
             {
-                var matches = Regex.Matches(Tags["emotes"], @"(?<emote>\w+):(?<start>\d+)-(?<end>\d+)");
+                var matches = Regex.Matches(Tags["emotes"], @"(?<start>\d+)-(?<end>\d+)");
                 var emoteOffset = 0;
-                foreach (Match match in matches)
+                List<Match> sortedMatches = matches.OrderBy(match => int.Parse(match.Groups["start"].Value)).ToList<Match>();
+                foreach (Match match in sortedMatches)
                 {
                     var start = int.Parse(match.Groups["start"].Value);
                     var end = int.Parse(match.Groups["end"].Value);
